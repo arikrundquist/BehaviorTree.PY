@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4">
+    <BehaviorTree ID="main">
+        <Fallback>
+            <SubTree ID="helper" name="call_helper" />
+            <SubTree ID="helper" name="call_helper_again" />
+        </Fallback>
+    </BehaviorTree>
+
+    <include path="helper.xml" />
+</root>

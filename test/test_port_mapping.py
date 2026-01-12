@@ -1,0 +1,124 @@
+from typing import Iterator, override
+
+import pytest
+
+from btpy.blackboard import Blackboard
+from btpy.behavior_tree import BehaviorTree
+from btpy.bt_parser import BTParser
+from btpy.models.node_status import NodeStatus
+from btpy.node_registration import NodeRegistration
+
+
+class _AddAction(BehaviorTree):
+    @override
+    def tick(self) -> NodeStatus:
+        x = self.get("x", int)
+        y = self.get("y", int)
+        z = self.get("z", int)
+
+        if x.value is None or y.value is None:
+            return NodeStatus.FAILURE
+
+        z.value = x.value + y.value
+        return NodeStatus.SUCCESS
+
+
+@pytest.fixture(autouse=True)
+def register_add_action() -> Iterator[None]:
+    with NodeRegistration.context():
+        NodeRegistration.register(_AddAction)
+        yield
+
+
+def test_no_port_mapping() -> None:
+    description = """
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4" main_tree_to_execute="main">
+  <BehaviorTree ID="main">
+    <Action ID="_AddAction" />
+  </BehaviorTree>
+</root>
+""".strip()
+
+    blackboard = Blackboard()
+    tree = BTParser().parse_string(description, blackboard=blackboard)
+    expected = blackboard.set("x", 7) + blackboard.set("y", 11)
+    assert tree.tick() == NodeStatus.SUCCESS
+    assert blackboard.get("z").value == expected
+
+
+def test_basic_port_mapping() -> None:
+    description = """
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4" main_tree_to_execute="main">
+  <BehaviorTree ID="main">
+    <SubTree ID="add" x="{data}" y="4" z="{result}" />
+  </BehaviorTree>
+
+  <BehaviorTree ID="add">
+    <Action ID="_AddAction" />
+  </BehaviorTree>
+</root>
+""".strip()
+
+    blackboard = Blackboard()
+    tree = BTParser().parse_string(description, blackboard=blackboard)
+    expected = blackboard.set("data", 2) + 4
+    assert tree.tick() == NodeStatus.SUCCESS
+    assert blackboard.get("result").value == expected
+
+
+@pytest.mark.parametrize("x,y", [(x, y) for x in range(3) for y in range(3)])
+def test_complex_port_mapping(x: int, y: int) -> None:
+    description = """
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4" main_tree_to_execute="main">
+  <BehaviorTree ID="main">
+    <Sequence>
+      <Action ID="_AddAction" y="4" z="{first}" />
+      <SubTree ID="double" n="{first}" result="{second}" />
+      <SubTree ID="add" x="{second}" y="{y}" z="{result}" />
+    </Sequence>
+  </BehaviorTree>
+
+  <BehaviorTree ID="add">
+    <Action ID="_AddAction" />
+  </BehaviorTree>
+
+  <BehaviorTree ID="double">
+    <Action ID="_AddAction" x="{n}" y="{n}" z="{result}" />
+  </BehaviorTree>
+</root>
+""".strip()
+
+    blackboard = Blackboard()
+    tree = BTParser().parse_string(description, blackboard=blackboard)
+    expected = (blackboard.set("x", x) + 4) * 2 + blackboard.set("y", y)
+    assert tree.tick() == NodeStatus.SUCCESS
+    assert blackboard.get("result").value == expected
+
+
+@pytest.mark.parametrize("x,y", [(x, y) for x in range(3) for y in range(3)])
+def test_bad_port_mapping(x: int, y: int) -> None:
+    description = """
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4" main_tree_to_execute="main">
+  <BehaviorTree ID="main">
+    <Sequence>
+      <_AddAction />
+      <SubTree ID="add" x="{z}" y="{z}" z="{result}" />
+      <SubTree ID="add" x="{bad1}" y="{bad2}" z="{z}" />
+    </Sequence>
+  </BehaviorTree>
+
+  <BehaviorTree ID="add">
+    <Action ID="_AddAction" />
+  </BehaviorTree>
+</root>
+""".strip()
+
+    blackboard = Blackboard()
+    tree = BTParser().parse_string(description, blackboard=blackboard)
+    expected = 2 * (blackboard.set("x", x) + blackboard.set("y", y))
+    assert tree.tick() == NodeStatus.FAILURE
+    assert blackboard.get("result").value == expected
