@@ -2,7 +2,7 @@ from typing import Final, Sequence, override
 
 from .models.node_status import NodeStatus
 
-from .blackboard import Blackboard
+from .blackboard import Blackboard, BlackboardChildType
 
 
 from .models.behavior_tree import BehaviorTreeNode
@@ -28,13 +28,21 @@ class SubTree(BehaviorTree):
         self.__name: Final = __name
         self.__child = __child
 
+        autoremap = self.mappings().get("_autoremap", "false")
+        assert autoremap in {"true", "false"}
+        self.__autoremap = autoremap == "true"
+
     @override
     def name(self) -> str:
         return self.__name
 
     @override
     def make_blackboard(self, parent: Blackboard) -> Blackboard:
-        return Blackboard()
+        return parent.create_child(
+            BlackboardChildType.REMAPPED
+            if self.__autoremap
+            else BlackboardChildType.CLEAN
+        )
 
     @override
     def tick(self) -> NodeStatus:

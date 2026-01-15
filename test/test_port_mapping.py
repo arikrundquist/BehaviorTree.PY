@@ -30,7 +30,8 @@ def register_add_action() -> Iterator[None]:
         yield
 
 
-def test_no_port_mapping() -> None:
+@pytest.mark.parametrize("x,y", [(x, y) for x in range(3) for y in range(3)])
+def test_no_port_mapping(x: int, y: int) -> None:
     description = """
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4" main_tree_to_execute="main">
@@ -42,12 +43,13 @@ def test_no_port_mapping() -> None:
 
     blackboard = Blackboard()
     tree = BTParser().parse_string(description, blackboard=blackboard)
-    expected = blackboard.set("x", 7) + blackboard.set("y", 11)
+    expected = blackboard.set("x", x) + blackboard.set("y", y)
     assert tree.tick() == NodeStatus.SUCCESS
     assert blackboard.get("z").value == expected
 
 
-def test_basic_port_mapping() -> None:
+@pytest.mark.parametrize("data", range(3))
+def test_basic_port_mapping(data: int) -> None:
     description = """
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4" main_tree_to_execute="main">
@@ -63,7 +65,7 @@ def test_basic_port_mapping() -> None:
 
     blackboard = Blackboard()
     tree = BTParser().parse_string(description, blackboard=blackboard)
-    expected = blackboard.set("data", 2) + 4
+    expected = blackboard.set("data", data) + 4
     assert tree.tick() == NodeStatus.SUCCESS
     assert blackboard.get("result").value == expected
 
@@ -94,6 +96,82 @@ def test_complex_port_mapping(x: int, y: int) -> None:
     blackboard = Blackboard()
     tree = BTParser().parse_string(description, blackboard=blackboard)
     expected = (blackboard.set("x", x) + 4) * 2 + blackboard.set("y", y)
+    assert tree.tick() == NodeStatus.SUCCESS
+    assert blackboard.get("result").value == expected
+
+
+@pytest.mark.parametrize("x,y", [(x, y) for x in range(3) for y in range(3)])
+def test_auto_remapping(x: int, y: int) -> None:
+    description = """
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4" main_tree_to_execute="main">
+  <BehaviorTree ID="main">
+    <Sequence>
+      <SubTree ID="add" _autoremap="true" />
+    </Sequence>
+  </BehaviorTree>
+
+  <BehaviorTree ID="add">
+    <Action ID="_AddAction" />
+  </BehaviorTree>
+</root>
+""".strip()
+
+    blackboard = Blackboard()
+    tree = BTParser().parse_string(description, blackboard=blackboard)
+    expected = blackboard.set("x", x) + blackboard.set("y", y)
+    assert tree.tick() == NodeStatus.SUCCESS
+    assert blackboard.get("z").value == expected
+
+
+@pytest.mark.parametrize("x,y", [(x, y) for x in range(3) for y in range(3)])
+def test_auto_remapping_private(x: int, y: int) -> None:
+    description = """
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4" main_tree_to_execute="main">
+  <BehaviorTree ID="main">
+    <Sequence>
+      <Action ID="_AddAction" x="{x}" y="{x}" z="{_private}" />
+      <SubTree ID="add" _autoremap="true" />
+    </Sequence>
+  </BehaviorTree>
+
+  <BehaviorTree ID="add">
+    <Action ID="_AddAction" x="{y}" y="{y}" z="{_private}" />
+  </BehaviorTree>
+</root>
+""".strip()
+
+    blackboard = Blackboard()
+    tree = BTParser().parse_string(description, blackboard=blackboard)
+    blackboard.set("y", y)
+    expected = 2 * blackboard.set("x", x)
+    assert tree.tick() == NodeStatus.SUCCESS
+    assert blackboard.get("_private").value == expected
+
+
+@pytest.mark.parametrize("x,y", [(x, y) for x in range(3) for y in range(3)])
+def test_global_blackboard(x: int, y: int) -> None:
+    description = """
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4" main_tree_to_execute="main">
+  <BehaviorTree ID="main">
+    <Sequence>
+      <SubTree ID="add" />
+      <Action ID="_AddAction" x="{result}" y="{result}" z="{result}" />
+      <Action ID="_AddAction" x="{@result}" y="{@result}" z="{@result}" />
+    </Sequence>
+  </BehaviorTree>
+
+  <BehaviorTree ID="add">
+    <Action ID="_AddAction" x="{@x}" y="{@y}" z="{@result}" />
+  </BehaviorTree>
+</root>
+""".strip()
+
+    blackboard = Blackboard()
+    tree = BTParser().parse_string(description, blackboard=blackboard)
+    expected = 4 * (blackboard.set("x", x) + blackboard.set("y", y))
     assert tree.tick() == NodeStatus.SUCCESS
     assert blackboard.get("result").value == expected
 

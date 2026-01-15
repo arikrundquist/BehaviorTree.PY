@@ -14,7 +14,7 @@ from .pointer import Pointer
 
 from .node_status import NodeStatus
 
-from ..blackboard import Blackboard
+from ..blackboard import Blackboard, BlackboardChildType
 
 _T = TypeVar("_T")
 
@@ -50,7 +50,7 @@ class BehaviorTreeNode(ABC):
         return self.__class__.__name__
 
     def make_blackboard(self, parent: Blackboard) -> Blackboard:
-        return Blackboard(parent)
+        return parent.create_child(BlackboardChildType.CHILD)
 
     def attach_blackboard(self, blackboard: Blackboard) -> Self:
         assert self.__blackboard is None

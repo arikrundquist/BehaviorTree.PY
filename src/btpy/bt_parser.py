@@ -59,12 +59,12 @@ class BTParser:
 
         return self
 
-    def get(self, blackboard: Blackboard | None = None) -> RootTree:
+    def get(self, global_blackboard: Blackboard | None = None) -> RootTree:
         assert self._main_tree is not None
         assert self._main_tree in self._tree_descriptions
         return RootTree(
             self._main_tree, self.load(self._tree_descriptions[self._main_tree])
-        ).attach_blackboard(blackboard or Blackboard())
+        ).attach_blackboard(global_blackboard or Blackboard())
 
     def load(self, xml: XML.Element) -> BehaviorTreeNode:
         name = xml.tag
