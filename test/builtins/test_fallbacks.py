@@ -9,8 +9,8 @@ from btpy.behavior_tree import BehaviorTree
 
 
 class _EchoAction(BehaviorTree):
-    def __init__(self, __children: list[BehaviorTree] | None = None, **ports: str):
-        super().__init__(__children, **ports)
+    def init(self) -> None:
+        super().init()
         self.status = NodeStatus.SUCCESS
         self.halted = False
 

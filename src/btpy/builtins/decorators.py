@@ -8,8 +8,8 @@ from ..node_registration import NodeRegistration
 
 
 class _Decorator(BehaviorTree):
-    def __init__(self, __children: list[BehaviorTree] | None = None, **ports: str):
-        super().__init__(__children, **ports)
+    def init(self) -> None:
+        super().init()
         (self.__child,) = self.children()
 
     def child(self) -> BehaviorTree:
@@ -138,8 +138,8 @@ class KeepRunningUntilFailure(_Decorator):
 
 @NodeRegistration.register
 class Delay(_Decorator):
-    def __init__(self, __children: list[BehaviorTree] | None = None, **ports: str):
-        super().__init__(__children, **ports)
+    def init(self) -> None:
+        super().init()
         self.__start_time: int | None = None
 
     @override
@@ -164,8 +164,8 @@ class Delay(_Decorator):
 
 @NodeRegistration.register
 class RunOnce(_Decorator):
-    def __init__(self, __children: list[BehaviorTree] | None = None, **ports: str):
-        super().__init__(__children, **ports)
+    def init(self) -> None:
+        super().init()
         self.__final_status: NodeStatus | None = None
 
     @override

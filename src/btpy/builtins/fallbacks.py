@@ -8,8 +8,8 @@ from ..node_registration import NodeRegistration
 
 @NodeRegistration.register
 class Fallback(BehaviorTree):
-    def __init__(self, __children: list[BehaviorTree] | None = None, **ports: str):
-        super().__init__(__children, **ports)
+    def init(self) -> None:
+        super().init()
         self._index = 0
 
     @override

@@ -25,6 +25,9 @@ class BehaviorTree(ABC):
         self.__children: Final = __children or []
         self.__ports: Final = ports
 
+        self.init()
+
+    def init(self) -> None:
         self.__blackboard: Blackboard | None = None
 
     @final
