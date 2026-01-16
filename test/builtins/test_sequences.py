@@ -38,7 +38,7 @@ class _EchoAction(BehaviorTree):
 def test_sequence(
     first: NodeStatus, second: NodeStatus, should_halt: bool, final: NodeStatus
 ) -> None:
-    one, two = _EchoAction([]), _EchoAction([])
+    one, two = _EchoAction(), _EchoAction()
     one.status = first
     two.status = second
 
@@ -48,7 +48,7 @@ def test_sequence(
 
 
 def test_sequence_memory() -> None:
-    one, two = _EchoAction([]), _EchoAction([])
+    one, two = _EchoAction(), _EchoAction()
     one.status = NodeStatus.SUCCESS
     two.status = NodeStatus.RUNNING
 
@@ -68,7 +68,7 @@ def test_sequence_memory() -> None:
 
 
 def test_reactive_sequence() -> None:
-    one, two = _EchoAction([]), _EchoAction([])
+    one, two = _EchoAction(), _EchoAction()
     one.status = NodeStatus.SUCCESS
     two.status = NodeStatus.RUNNING
 

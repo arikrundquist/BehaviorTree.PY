@@ -39,7 +39,7 @@ class _EchoAction(BehaviorTree):
 def test_fallback(
     first: NodeStatus, second: NodeStatus, should_halt: bool, final: NodeStatus
 ) -> None:
-    one, two = _EchoAction([]), _EchoAction([])
+    one, two = _EchoAction(), _EchoAction()
     one.status = first
     two.status = second
 
@@ -96,7 +96,7 @@ def test_reactive_fallback(
     final: NodeStatus,
 ) -> None:
     statuses = (first, second, third)
-    echos = [_EchoAction([]) for _ in statuses]
+    echos = [_EchoAction() for _ in statuses]
     for echo, status in zip(echos, statuses, strict=True):
         echo.status = status
 

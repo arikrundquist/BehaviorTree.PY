@@ -39,7 +39,7 @@ class _EchoAction(BehaviorTree):
     ],
 )
 def test_inverter(status: NodeStatus, final: NodeStatus) -> None:
-    child = _EchoAction([])
+    child = _EchoAction()
     child.status = status
     assert Inverter([child]).tick() == final
 
@@ -54,7 +54,7 @@ def test_inverter(status: NodeStatus, final: NodeStatus) -> None:
     ],
 )
 def test_force_success(status: NodeStatus, final: NodeStatus) -> None:
-    child = _EchoAction([])
+    child = _EchoAction()
     child.status = status
     assert ForceSuccess([child]).tick() == final
 
@@ -69,7 +69,7 @@ def test_force_success(status: NodeStatus, final: NodeStatus) -> None:
     ],
 )
 def test_force_failure(status: NodeStatus, final: NodeStatus) -> None:
-    child = _EchoAction([])
+    child = _EchoAction()
     child.status = status
     assert ForceFailure([child]).tick() == final
 
@@ -110,7 +110,7 @@ def test_repeat(
     blackboard = Blackboard()
     blackboard.set("num_cycles", num_cycles)
 
-    child = _StatusSequenceAction([])
+    child = _StatusSequenceAction()
     child.status_sequence = status_sequence
 
     uut = Repeat([child]).attach_blackboard(blackboard)
@@ -135,7 +135,7 @@ def test_retry_until_successful(
     blackboard = Blackboard()
     blackboard.set("num_attempts", num_attempts)
 
-    child = _StatusSequenceAction([])
+    child = _StatusSequenceAction()
     child.status_sequence = status_sequence
 
     uut = RetryUntilSuccessful([child]).attach_blackboard(blackboard)
@@ -155,7 +155,7 @@ def test_keep_running_until_failure(
     child_status: NodeStatus,
     expected_status: NodeStatus,
 ) -> None:
-    echo = _EchoAction([])
+    echo = _EchoAction()
     echo.status = child_status
 
     uut = KeepRunningUntilFailure([echo])
@@ -176,7 +176,7 @@ def test_delay(
     blackboard = Blackboard()
     blackboard.set("delay_msec", delay_msec)
 
-    echo = _EchoAction([])
+    echo = _EchoAction()
     echo.status = NodeStatus.SKIPPED
 
     uut = Delay([echo]).attach_blackboard(blackboard)
@@ -190,7 +190,7 @@ def test_halt_delay(delay_msec: int) -> None:
     blackboard = Blackboard()
     blackboard.set("delay_msec", delay_msec)
 
-    echo = _EchoAction([])
+    echo = _EchoAction()
     echo.status = NodeStatus.SUCCESS
 
     uut = Delay([echo]).attach_blackboard(blackboard)
@@ -221,7 +221,7 @@ def test_run_once(
     blackboard = Blackboard()
     blackboard.set("then_skip", then_skip)
 
-    child = _StatusSequenceAction([])
+    child = _StatusSequenceAction()
     child.status_sequence = [
         (i + 1, status) for (i, status) in enumerate(status_sequence)
     ]
