@@ -1,7 +1,6 @@
 import time
 from typing import Iterator, assert_never, override
 
-from ..models.behavior_tree import BehaviorTreeNode
 
 from ..models.node_status import NodeStatus
 from ..behavior_tree import BehaviorTree
@@ -9,11 +8,11 @@ from ..node_registration import NodeRegistration
 
 
 class _Decorator(BehaviorTree):
-    def __init__(self, __children: list[BehaviorTreeNode], **ports: str):
+    def __init__(self, __children: list[BehaviorTree] | None = None, **ports: str):
         super().__init__(__children, **ports)
-        (self.__child,) = __children
+        (self.__child,) = self.children()
 
-    def child(self) -> BehaviorTreeNode:
+    def child(self) -> BehaviorTree:
         return self.__child
 
     def tick_child(self) -> NodeStatus:
@@ -139,7 +138,7 @@ class KeepRunningUntilFailure(_Decorator):
 
 @NodeRegistration.register
 class Delay(_Decorator):
-    def __init__(self, __children: list[BehaviorTreeNode], **ports: str):
+    def __init__(self, __children: list[BehaviorTree] | None = None, **ports: str):
         super().__init__(__children, **ports)
         self.__start_time: int | None = None
 
@@ -165,7 +164,7 @@ class Delay(_Decorator):
 
 @NodeRegistration.register
 class RunOnce(_Decorator):
-    def __init__(self, __children: list[BehaviorTreeNode], **ports: str):
+    def __init__(self, __children: list[BehaviorTree] | None = None, **ports: str):
         super().__init__(__children, **ports)
         self.__final_status: NodeStatus | None = None
 

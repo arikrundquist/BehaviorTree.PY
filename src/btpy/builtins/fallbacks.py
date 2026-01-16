@@ -1,6 +1,5 @@
 from typing import assert_never, override
 
-from ..models.behavior_tree import BehaviorTreeNode
 
 from ..models.node_status import NodeStatus
 from ..behavior_tree import BehaviorTree
@@ -9,7 +8,7 @@ from ..node_registration import NodeRegistration
 
 @NodeRegistration.register
 class Fallback(BehaviorTree):
-    def __init__(self, __children: list[BehaviorTreeNode], **ports: str):
+    def __init__(self, __children: list[BehaviorTree] | None = None, **ports: str):
         super().__init__(__children, **ports)
         self._index = 0
 

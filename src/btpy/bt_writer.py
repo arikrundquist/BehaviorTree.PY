@@ -1,5 +1,4 @@
-from .behavior_tree import SubTree
-from .models.behavior_tree import BehaviorTreeNode
+from .behavior_tree import BehaviorTree, SubTree
 
 
 class BTWriter:
@@ -18,7 +17,7 @@ class BTWriter:
     def __init__(self) -> None:
         self._seen_subtrees = set[str]()
 
-    def _get_port_attrs(self, node: BehaviorTreeNode) -> str:
+    def _get_port_attrs(self, node: BehaviorTree) -> str:
         return "".join(
             f' {name}="{value}"' for (name, value) in node.mappings().items()
         )
@@ -34,7 +33,7 @@ class BTWriter:
 {indent * level}</BehaviorTree>
 """
 
-    def _to_xml(self, node: BehaviorTreeNode, indent: str, level: int) -> str:
+    def _to_xml(self, node: BehaviorTree, indent: str, level: int) -> str:
         name = node.name()
         attrs = self._get_port_attrs(node)
         children = node.children()

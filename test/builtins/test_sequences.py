@@ -3,14 +3,13 @@ from typing import override
 import pytest
 
 from btpy.builtins.sequences import ReactiveSequence, Sequence, SequenceWithMemory
-from btpy.models.behavior_tree import BehaviorTreeNode
 
 from btpy.models.node_status import NodeStatus
 from btpy.behavior_tree import BehaviorTree
 
 
 class _EchoAction(BehaviorTree):
-    def __init__(self, __children: list[BehaviorTreeNode], **ports: str):
+    def __init__(self, __children: list[BehaviorTree] | None = None, **ports: str):
         super().__init__(__children, **ports)
         self.status = NodeStatus.SUCCESS
         self.halted = False

@@ -14,14 +14,13 @@ from btpy.builtins.decorators import (
     RetryUntilSuccessful,
     RunOnce,
 )
-from btpy.models.behavior_tree import BehaviorTreeNode
 
 from btpy.models.node_status import NodeStatus
 from btpy.behavior_tree import BehaviorTree
 
 
 class _EchoAction(BehaviorTree):
-    def __init__(self, __children: list[BehaviorTreeNode], **ports: str):
+    def __init__(self, __children: list[BehaviorTree] | None = None, **ports: str):
         super().__init__(__children, **ports)
         self.status = NodeStatus.SUCCESS
 
@@ -76,7 +75,7 @@ def test_force_failure(status: NodeStatus, final: NodeStatus) -> None:
 
 
 class _StatusSequenceAction(BehaviorTree):
-    def __init__(self, __children: list[BehaviorTreeNode], **ports: str):
+    def __init__(self, __children: list[BehaviorTree] | None = None, **ports: str):
         super().__init__(__children, **ports)
         self.status_sequence: list[tuple[int, NodeStatus]] = []
         self.status_iterator = self._iterate_sequence()

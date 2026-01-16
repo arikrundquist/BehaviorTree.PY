@@ -4,9 +4,8 @@ from xml.etree import ElementTree as XML
 
 from .blackboard import Blackboard
 
-from .behavior_tree import RootTree, SubTree
+from .behavior_tree import BehaviorTree, RootTree, SubTree
 
-from .models.behavior_tree import BehaviorTreeNode
 
 from .node_registration import NodeRegistration
 
@@ -66,7 +65,7 @@ class BTParser:
             self._main_tree, self.load(self._tree_descriptions[self._main_tree])
         ).attach_blackboard(global_blackboard or Blackboard())
 
-    def load(self, xml: XML.Element) -> BehaviorTreeNode:
+    def load(self, xml: XML.Element) -> BehaviorTree:
         name = xml.tag
         attrs = xml.attrib.copy()
 
