@@ -44,7 +44,8 @@ class BehaviorTreeNode(ABC):
         pass
 
     def halt(self) -> None:
-        pass
+        for child in self.children():
+            child.halt()
 
     def name(self) -> str:
         return self.__class__.__name__
@@ -77,6 +78,18 @@ class BehaviorTreeNode(ABC):
         ptr = self.__blackboard.get(key)
         if ptr.value is not None and converter is not None:
             ptr.value = converter(ptr.value)
+        return ptr
+
+    def get_bool(self, key: str) -> Pointer[bool | None]:
+        ptr = self.get(key)
+        match ptr.value:
+            case "true":
+                ptr.value = True
+
+            case "false":
+                ptr.value = False
+
+        assert ptr.value is None or isinstance(ptr.value, bool)
         return ptr
 
     def __iter__(self) -> Iterator["BehaviorTreeNode"]:

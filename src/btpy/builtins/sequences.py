@@ -8,37 +8,58 @@ from ..node_registration import NodeRegistration
 
 
 @NodeRegistration.register
-class Sequence(BehaviorTree):
+class SequenceWithMemory(BehaviorTree):
     def __init__(self, __children: list[BehaviorTreeNode], **ports: str):
         super().__init__(__children, **ports)
         self._index = 0
 
     @override
     def tick(self) -> NodeStatus:
-        if self._index >= len(self.children()):
-            return NodeStatus.SUCCESS
+        for self._index in range(self._index, len(self.children())):
+            match self.children()[self._index].tick():
+                case NodeStatus.FAILURE:
+                    self.halt()
+                    return NodeStatus.FAILURE
 
-        match self.children()[self._index].tick():
-            case NodeStatus.FAILURE:
-                return NodeStatus.FAILURE
+                case NodeStatus.RUNNING:
+                    return NodeStatus.RUNNING
 
-            case NodeStatus.RUNNING:
-                return NodeStatus.RUNNING
+                case NodeStatus.SKIPPED | NodeStatus.SUCCESS:
+                    continue
 
-            case NodeStatus.SKIPPED | NodeStatus.SUCCESS:
-                self._index += 1
-                return self.tick()
+                case _:  # pragma: no cover
+                    assert_never(self)
 
-            case _:  # pragma: no cover
-                assert_never(self)
+        self.halt()
+        return NodeStatus.SUCCESS
 
 
-# TODO
-# @NodeRegistration.register
-# class ReactiveSequence(BehaviorTree):
-#     pass
+@NodeRegistration.register
+class Sequence(SequenceWithMemory):
+    @override
+    def halt(self) -> None:
+        super().halt()
+        self._index = 0
 
-# TODO
-# @NodeRegistration.register
-# class SequenceWithMemory(BehaviorTree):
-#     pass
+
+@NodeRegistration.register
+class ReactiveSequence(BehaviorTree):
+    @override
+    def tick(self) -> NodeStatus:
+        for child in self.children():
+            match child.tick():
+                case NodeStatus.FAILURE:
+                    self.halt()
+                    return NodeStatus.FAILURE
+
+                case NodeStatus.RUNNING:
+                    return NodeStatus.RUNNING
+
+                case NodeStatus.SKIPPED | NodeStatus.SUCCESS:
+                    continue
+
+                case _:  # pragma: no cover
+                    assert_never(self)
+
+        self.halt()
+        return NodeStatus.SUCCESS

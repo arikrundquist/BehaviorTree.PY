@@ -1,4 +1,5 @@
-from typing import override
+import time
+from typing import Iterator, assert_never, override
 
 from ..models.behavior_tree import BehaviorTreeNode
 
@@ -9,17 +10,25 @@ from ..node_registration import NodeRegistration
 
 class _Decorator(BehaviorTree):
     def __init__(self, __children: list[BehaviorTreeNode], **ports: str):
+        super().__init__(__children, **ports)
         (self.__child,) = __children
 
     def child(self) -> BehaviorTreeNode:
         return self.__child
+
+    def tick_child(self) -> NodeStatus:
+        match status := self.child().tick():
+            case NodeStatus.SUCCESS | NodeStatus.FAILURE:
+                self.child().halt()
+
+        return status
 
 
 @NodeRegistration.register
 class Inverter(_Decorator):
     @override
     def tick(self) -> NodeStatus:
-        match status := self.child().tick():
+        match status := self.tick_child():
             case NodeStatus.SUCCESS:
                 return NodeStatus.FAILURE
 
@@ -30,43 +39,147 @@ class Inverter(_Decorator):
                 return status
 
 
-# TODO
-# @NodeRegistration.register
-# class ForceSuccess(_Decorator):
-#     pass
+@NodeRegistration.register
+class ForceSuccess(_Decorator):
+    @override
+    def tick(self) -> NodeStatus:
+        match self.tick_child():
+            case NodeStatus.RUNNING:
+                return NodeStatus.RUNNING
+
+            case _:
+                return NodeStatus.SUCCESS
 
 
-# TODO
-# @NodeRegistration.register
-# class ForceFailure(_Decorator):
-#     pass
+@NodeRegistration.register
+class ForceFailure(_Decorator):
+    @override
+    def tick(self) -> NodeStatus:
+        match self.tick_child():
+            case NodeStatus.RUNNING:
+                return NodeStatus.RUNNING
+
+            case _:
+                return NodeStatus.FAILURE
 
 
-# TODO
-# @NodeRegistration.register
-# class Repeat(_Decorator):
-#     pass
+@NodeRegistration.register
+class Repeat(_Decorator):
+    @override
+    def tick(self) -> NodeStatus:
+        num_cycles = self.get("num_cycles", int).value
+        if num_cycles is None or num_cycles < -1:
+            return NodeStatus.FAILURE
+
+        iterator = self.__forever() if num_cycles < 0 else range(num_cycles)
+
+        for _ in iterator:
+            match status := self.tick_child():
+                case NodeStatus.RUNNING:
+                    return NodeStatus.RUNNING
+
+                case NodeStatus.FAILURE | NodeStatus.SKIPPED:
+                    return status
+
+                case NodeStatus.SUCCESS:
+                    continue
+
+                case _:  # pragma: no cover
+                    assert_never(self)
+
+        return NodeStatus.SUCCESS
+
+    def __forever(self) -> Iterator[None]:
+        while True:
+            yield
 
 
-# TODO
-# @NodeRegistration.register
-# class RetryUntilSuccessful(_Decorator):
-#     pass
+@NodeRegistration.register
+class RetryUntilSuccessful(_Decorator):
+    @override
+    def tick(self) -> NodeStatus:
+        num_attempts = self.get("num_attempts", int).value
+        if num_attempts is None or num_attempts < -1:
+            return NodeStatus.FAILURE
+
+        iterator = self.__forever() if num_attempts < 0 else range(num_attempts)
+
+        for _ in iterator:
+            match status := self.tick_child():
+                case NodeStatus.RUNNING:
+                    return NodeStatus.RUNNING
+
+                case NodeStatus.SUCCESS | NodeStatus.SKIPPED:
+                    return status
+
+                case NodeStatus.FAILURE:
+                    continue
+
+                case _:  # pragma: no cover
+                    assert_never(self)
+
+        return NodeStatus.FAILURE
+
+    def __forever(self) -> Iterator[None]:
+        while True:
+            yield
 
 
-# TODO
-# @NodeRegistration.register
-# class KeepRunningUntilFailure(_Decorator):
-#     pass
+@NodeRegistration.register
+class KeepRunningUntilFailure(_Decorator):
+    @override
+    def tick(self) -> NodeStatus:
+        match status := self.tick_child():
+            case NodeStatus.FAILURE | NodeStatus.SKIPPED:
+                return status
+
+            case _:
+                return NodeStatus.RUNNING
 
 
-# TODO
-# @NodeRegistration.register
-# class Delay(_Decorator):
-#     pass
+@NodeRegistration.register
+class Delay(_Decorator):
+    def __init__(self, __children: list[BehaviorTreeNode], **ports: str):
+        super().__init__(__children, **ports)
+        self.__start_time: int | None = None
+
+    @override
+    def halt(self) -> None:
+        super().halt()
+        self.__start_time = None
+
+    @override
+    def tick(self) -> NodeStatus:
+        self.__start_time = self.__start_time or time.time_ns()
+        delay = self.get("delay_msec", int).value
+        if delay is None:
+            return NodeStatus.FAILURE
+
+        end_time = self.__start_time + delay * 1_000_000
+        if time.time_ns() < end_time:
+            return NodeStatus.RUNNING
+
+        # intentionally not self.tick_child()
+        return self.child().tick()
 
 
-# TODO
-# @NodeRegistration.register
-# class RunOnce(_Decorator):
-#     pass
+@NodeRegistration.register
+class RunOnce(_Decorator):
+    def __init__(self, __children: list[BehaviorTreeNode], **ports: str):
+        super().__init__(__children, **ports)
+        self.__final_status: NodeStatus | None = None
+
+    @override
+    def tick(self) -> NodeStatus:
+        if self.__final_status is None:
+            match status := self.tick_child():
+                case NodeStatus.RUNNING:
+                    return status
+
+                case _:
+                    self.__final_status = status
+                    return status
+
+        then_skip = self.get_bool("then_skip").value
+        then_skip = True if then_skip is None else then_skip
+        return NodeStatus.SKIPPED if then_skip else self.__final_status

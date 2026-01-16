@@ -14,26 +14,53 @@ class Fallback(BehaviorTree):
         self._index = 0
 
     @override
+    def halt(self) -> None:
+        super().halt()
+        self._index = 0
+
+    @override
     def tick(self) -> NodeStatus:
-        if self._index >= len(self.children()):
-            return NodeStatus.FAILURE
+        for self._index in range(self._index, len(self.children())):
+            match self.children()[self._index].tick():
+                case NodeStatus.SUCCESS:
+                    self.halt()
+                    return NodeStatus.SUCCESS
 
-        match self.children()[self._index].tick():
-            case NodeStatus.SUCCESS:
-                return NodeStatus.SUCCESS
+                case NodeStatus.RUNNING:
+                    return NodeStatus.RUNNING
 
-            case NodeStatus.RUNNING:
-                return NodeStatus.RUNNING
+                case NodeStatus.SKIPPED | NodeStatus.FAILURE:
+                    continue
 
-            case NodeStatus.SKIPPED | NodeStatus.FAILURE:
-                self._index += 1
-                return self.tick()
+                case _:  # pragma: no cover
+                    assert_never(self)
 
-            case _:  # pragma: no cover
-                assert_never(self)
+        self.halt()
+        return NodeStatus.FAILURE
 
 
-# TODO
-# @NodeRegistration.register
-# class ReactiveFallback(BehaviorTree):
-#     pass
+@NodeRegistration.register
+class ReactiveFallback(BehaviorTree):
+    @override
+    def tick(self) -> NodeStatus:
+        status = NodeStatus.FAILURE
+
+        for child in self.children():
+            match child.tick():
+                case NodeStatus.SUCCESS:
+                    self.halt()
+                    return NodeStatus.SUCCESS
+
+                case NodeStatus.RUNNING:
+                    status = NodeStatus.RUNNING
+
+                case NodeStatus.SKIPPED | NodeStatus.FAILURE:
+                    continue
+
+                case _:  # pragma: no cover
+                    assert_never(self)
+
+        if status == NodeStatus.FAILURE:
+            self.halt()
+
+        return status
