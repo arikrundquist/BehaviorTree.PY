@@ -2,9 +2,9 @@ import time
 from typing import Iterator, assert_never, override
 
 
-from ..models.node_status import NodeStatus
-from ..behavior_tree import BehaviorTree
-from ..node_registration import NodeRegistration
+from btpy.models.node_status import NodeStatus
+from btpy.behavior_tree import BehaviorTree
+from btpy.node_registration import NodeRegistration
 
 
 class _Decorator(BehaviorTree):

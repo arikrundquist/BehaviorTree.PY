@@ -2,12 +2,12 @@ from pathlib import Path
 from typing import Callable, Self
 from xml.etree import ElementTree as XML
 
-from .blackboard import Blackboard
+from btpy.blackboard import Blackboard
 
-from .behavior_tree import BehaviorTree, RootTree, SubTree
+from btpy.behavior_tree import BehaviorTree, RootTree, SubTree
 
 
-from .node_registration import NodeRegistration
+from btpy.node_registration import NodeRegistration
 
 
 class BTParser:

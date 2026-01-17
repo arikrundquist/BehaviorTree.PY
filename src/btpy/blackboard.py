@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Any, Callable, Final, TypeVar, assert_never, overload, override
 
-from .models.pointer import Pointer
+from btpy.models.pointer import Pointer
 
 
 _T = TypeVar("_T")

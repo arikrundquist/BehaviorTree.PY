@@ -1,4 +1,4 @@
-from .behavior_tree import BehaviorTree, SubTree
+from btpy.behavior_tree import BehaviorTree, SubTree
 
 
 class BTWriter:

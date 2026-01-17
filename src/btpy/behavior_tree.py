@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
 from typing import Callable, Final, Iterator, Sequence, final, overload, override
 
-from .models.pointer import Pointer
+from btpy.models.pointer import Pointer
 
-from .models.node_status import NodeStatus
+from btpy.models.node_status import NodeStatus
 
-from .blackboard import Blackboard, BlackboardChildType
+from btpy.blackboard import Blackboard, BlackboardChildType
 
 
 from typing import (

@@ -1,8 +1,8 @@
-from .models.pointer import Pointer
-from .behavior_tree import BehaviorTree
-from .blackboard import Blackboard
-from .builtins import *  # noqa: F403 using registration side effects
-from .models.node_status import NodeStatus
+from btpy.models.pointer import Pointer
+from btpy.behavior_tree import BehaviorTree
+from btpy.blackboard import Blackboard
+from btpy.builtins import *  # noqa: F403 using registration side effects
+from btpy.models.node_status import NodeStatus
 
 
 __all__ = [

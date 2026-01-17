@@ -1,8 +1,8 @@
 from contextlib import contextmanager
 from typing import Iterator, Protocol
 
-from .behavior_tree import BehaviorTree
-from .layered_dict import LayeredDict
+from btpy.behavior_tree import BehaviorTree
+from btpy.layered_dict import LayeredDict
 
 
 class _BehaviorTreeClass(Protocol):
