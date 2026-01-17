@@ -1,9 +1,12 @@
-from btpy.builtins.sequences import Sequence
-from btpy.node_registration import NodeRegistration
+from typing import override
+from btpy import BehaviorTree, NodeStatus
+from btpy import NodeRegistration
 
 
-class _FakeNode(Sequence):
-    pass
+class _FakeNode(BehaviorTree):
+    @override
+    def tick(self) -> NodeStatus:
+        return NodeStatus.SUCCESS
 
 
 def test_node_registration() -> None:

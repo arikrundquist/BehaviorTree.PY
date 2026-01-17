@@ -1,9 +1,9 @@
 from typing import assert_never, override
 
 
-from btpy.models.node_status import NodeStatus
-from btpy.behavior_tree import BehaviorTree
-from btpy.node_registration import NodeRegistration
+from btpy.core import NodeStatus
+from btpy.core import BehaviorTree
+from btpy.core import NodeRegistration
 
 
 @NodeRegistration.register

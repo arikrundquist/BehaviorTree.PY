@@ -2,11 +2,11 @@ from typing import Iterator, override
 
 import pytest
 
-from btpy.blackboard import Blackboard
-from btpy.behavior_tree import BehaviorTree
-from btpy.bt_parser import BTParser
-from btpy.models.node_status import NodeStatus
-from btpy.node_registration import NodeRegistration
+from btpy import Blackboard
+from btpy import BehaviorTree
+from btpy import BTParser
+from btpy import NodeStatus
+from btpy import NodeRegistration
 
 
 class _AddAction(BehaviorTree):

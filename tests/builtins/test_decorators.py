@@ -3,8 +3,8 @@ from typing import Iterator, override
 
 import pytest
 
-from btpy.blackboard import Blackboard
-from btpy.builtins.decorators import (
+from btpy import Blackboard
+from btpy.builtins import (
     Delay,
     ForceFailure,
     ForceSuccess,
@@ -15,8 +15,7 @@ from btpy.builtins.decorators import (
     RunOnce,
 )
 
-from btpy.models.node_status import NodeStatus
-from btpy.behavior_tree import BehaviorTree
+from btpy import NodeStatus, BehaviorTree
 
 
 class _EchoAction(BehaviorTree):

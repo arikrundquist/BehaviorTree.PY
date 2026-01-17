@@ -1,9 +1,9 @@
 from typing import override
 
 from btpy import NodeStatus
-from btpy.behavior_tree import BehaviorTree
-from btpy.bt_parser import BTParser
-from btpy.observer import Observer
+from btpy import BehaviorTree
+from btpy import BTParser
+from btpy.builtins import Observer
 
 
 class _Observer1(Observer):

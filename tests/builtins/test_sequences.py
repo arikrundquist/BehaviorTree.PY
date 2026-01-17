@@ -2,10 +2,10 @@ from typing import override
 
 import pytest
 
-from btpy.builtins.sequences import ReactiveSequence, Sequence, SequenceWithMemory
+from btpy.builtins import ReactiveSequence, Sequence, SequenceWithMemory
 
-from btpy.models.node_status import NodeStatus
-from btpy.behavior_tree import BehaviorTree
+from btpy import NodeStatus
+from btpy import BehaviorTree
 
 
 class _EchoAction(BehaviorTree):

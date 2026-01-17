@@ -1,11 +1,11 @@
 from contextlib import contextmanager
 from typing import Iterator, Protocol
 
-from btpy.behavior_tree import BehaviorTree
-from btpy.layered_dict import LayeredDict
+from btpy.core._impl.behavior_tree import BehaviorTree
+from btpy.core._impl.layered_dict import LayeredDict
 
 
-class _BehaviorTreeClass(Protocol):
+class BehaviorTreeFactory(Protocol):
     __name__: str
 
     def __call__(
@@ -15,10 +15,10 @@ class _BehaviorTreeClass(Protocol):
 
 
 class NodeRegistration:
-    __registered_nodes = LayeredDict[str, _BehaviorTreeClass]()
+    __registered_nodes = LayeredDict[str, BehaviorTreeFactory]()
 
     @staticmethod
-    def get(name: str) -> _BehaviorTreeClass:
+    def get(name: str) -> BehaviorTreeFactory:
         return NodeRegistration.__registered_nodes[name]
 
     @staticmethod
@@ -26,10 +26,10 @@ class NodeRegistration:
         return name in NodeRegistration.__registered_nodes
 
     @staticmethod
-    def register(Class: _BehaviorTreeClass) -> _BehaviorTreeClass:
-        assert Class.__name__ not in NodeRegistration.__registered_nodes
-        NodeRegistration.__registered_nodes[Class.__name__] = Class
-        return Class
+    def register(factory: BehaviorTreeFactory) -> BehaviorTreeFactory:
+        assert factory.__name__ not in NodeRegistration.__registered_nodes
+        NodeRegistration.__registered_nodes[factory.__name__] = factory
+        return factory
 
     @contextmanager
     @staticmethod

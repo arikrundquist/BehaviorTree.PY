@@ -1,4 +1,5 @@
-from btpy.blackboard import Blackboard, BlackboardChildType
+from btpy import Blackboard
+from btpy.core import BlackboardChildType
 
 
 def test_top_level_blackboard() -> None:

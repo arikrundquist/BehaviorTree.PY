@@ -2,8 +2,8 @@ from pathlib import Path
 from typing import Final
 
 import pytest
-from btpy.bt_parser import BTParser
-from btpy.bt_writer import BTWriter
+from btpy import BTParser
+from btpy.core import BTWriter
 
 
 @pytest.fixture

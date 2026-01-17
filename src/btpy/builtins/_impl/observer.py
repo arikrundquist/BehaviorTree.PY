@@ -1,8 +1,8 @@
 from abc import abstractmethod
 from typing import Final, TypeVar, final, override
 
-from btpy import NodeStatus
-from btpy.behavior_tree import BehaviorTree
+from btpy.core import NodeStatus
+from btpy.core import BehaviorTree
 
 
 _T = TypeVar("_T")

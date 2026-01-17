@@ -5,11 +5,11 @@ from typing import Callable, Iterator, override
 
 import pytest
 
-from btpy.bt_parser import BTParser
-from btpy.models.node_status import NodeStatus
-from btpy.behavior_tree import BehaviorTree
-from btpy.node_registration import NodeRegistration
-from btpy.observer import Observer
+from btpy import BTParser
+from btpy import NodeStatus
+from btpy import BehaviorTree
+from btpy import NodeRegistration
+from btpy.builtins import Observer
 
 
 class _RecordingObserver(Observer):

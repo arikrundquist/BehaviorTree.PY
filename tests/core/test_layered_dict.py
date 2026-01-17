@@ -1,5 +1,5 @@
 import pytest
-from btpy.layered_dict import LayeredDict
+from btpy.core import LayeredDict
 
 
 def test_single_layered_dict() -> None:
