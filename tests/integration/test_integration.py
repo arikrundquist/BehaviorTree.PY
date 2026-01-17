@@ -1,14 +1,10 @@
 import csv
-from pathlib import Path
 import time
+from pathlib import Path
 from typing import Callable, Iterator, override
 
 import pytest
-
-from btpy import BTParser
-from btpy import NodeStatus
-from btpy import BehaviorTree
-from btpy import NodeRegistration
+from btpy import BehaviorTree, BTParser, NodeRegistration, NodeStatus
 from btpy.builtins import Observer
 
 

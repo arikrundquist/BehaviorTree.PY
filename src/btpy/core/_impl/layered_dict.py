@@ -1,6 +1,5 @@
 from typing import Final, Generic, TypeVar, final
 
-
 _K = TypeVar("_K")
 _V = TypeVar("_V")
 

@@ -1,13 +1,20 @@
 from abc import ABC, abstractmethod
-from typing import Callable, Final, Iterator, Sequence, final, overload, override
+from typing import (
+    Any,
+    Callable,
+    Final,
+    Iterator,
+    Self,
+    Sequence,
+    TypeVar,
+    final,
+    overload,
+    override,
+)
 
-from btpy.core._impl.pointer import Pointer
-from btpy.core._impl.node_status import NodeStatus
 from btpy.core._impl.blackboard import Blackboard, BlackboardChildType
-
-
-from typing import Any, Self, TypeVar
-
+from btpy.core._impl.node_status import NodeStatus
+from btpy.core._impl.pointer import Pointer
 
 _T = TypeVar("_T")
 

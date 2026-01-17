@@ -2,11 +2,8 @@ from pathlib import Path
 from typing import Callable, Self
 from xml.etree import ElementTree as XML
 
-from btpy.core._impl.blackboard import Blackboard
-
 from btpy.core._impl.behavior_tree import BehaviorTree, RootTree, SubTree
-
-
+from btpy.core._impl.blackboard import Blackboard
 from btpy.core._impl.node_registration import NodeRegistration
 
 

@@ -1,8 +1,7 @@
 import time
 from typing import Iterator, assert_never, override
 
-
-from btpy.core import NodeStatus, BehaviorTree, NodeRegistration
+from btpy.core import BehaviorTree, NodeRegistration, NodeStatus
 
 
 class _Decorator(BehaviorTree):

@@ -1,16 +1,16 @@
 from btpy.builtins._impl.decorators import (
-    Inverter,
+    Delay,
     ForceFailure,
     ForceSuccess,
+    Inverter,
+    KeepRunningUntilFailure,
     Repeat,
     RetryUntilSuccessful,
-    KeepRunningUntilFailure,
-    Delay,
     RunOnce,
 )
 from btpy.builtins._impl.fallbacks import Fallback, ReactiveFallback
 from btpy.builtins._impl.observer import Observer
-from btpy.builtins._impl.sequences import Sequence, SequenceWithMemory, ReactiveSequence
+from btpy.builtins._impl.sequences import ReactiveSequence, Sequence, SequenceWithMemory
 
 __all__ = [
     "Delay",

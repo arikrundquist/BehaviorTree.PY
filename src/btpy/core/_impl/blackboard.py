@@ -3,7 +3,6 @@ from typing import Any, Callable, Final, TypeVar, assert_never, overload, overri
 
 from btpy.core._impl.pointer import Pointer
 
-
 _T = TypeVar("_T")
 
 

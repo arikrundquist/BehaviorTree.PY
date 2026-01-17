@@ -2,8 +2,7 @@ import time
 from typing import Iterator, override
 
 import pytest
-
-from btpy import Blackboard
+from btpy import BehaviorTree, Blackboard, NodeStatus
 from btpy.builtins import (
     Delay,
     ForceFailure,
@@ -14,8 +13,6 @@ from btpy.builtins import (
     RetryUntilSuccessful,
     RunOnce,
 )
-
-from btpy import NodeStatus, BehaviorTree
 
 
 class _EchoAction(BehaviorTree):

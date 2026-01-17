@@ -1,6 +1,6 @@
 from typing import override
-from btpy import BehaviorTree, NodeStatus
-from btpy import NodeRegistration
+
+from btpy import BehaviorTree, NodeRegistration, NodeStatus
 
 
 class _FakeNode(BehaviorTree):

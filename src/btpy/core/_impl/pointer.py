@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from typing import Generic, TypeVar
 
-
 _T = TypeVar("_T", covariant=True)
 
 
