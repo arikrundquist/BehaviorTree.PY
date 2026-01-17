@@ -10,9 +10,10 @@ class _FakeNode(BehaviorTree):
 
 
 def test_node_registration() -> None:
+    """test that a node can be registered"""
     name = _FakeNode().class_name()
     assert not NodeRegistration.has(name)
-    with NodeRegistration.context():
+    with NodeRegistration.scope():
         NodeRegistration.register(_FakeNode)
         assert NodeRegistration.has(name)
         assert NodeRegistration.get(name) is _FakeNode

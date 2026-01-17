@@ -21,6 +21,7 @@ class _Observer2(Observer):
 
 
 def test_observers_ignore_observers() -> None:
+    """test that observer nodes do not observe other observers"""
     xml = """
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4">

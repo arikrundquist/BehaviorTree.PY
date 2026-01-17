@@ -6,4 +6,6 @@ _T = TypeVar("_T", covariant=True)
 
 @dataclass
 class Pointer(Generic[_T]):
+    """a reference to a value"""
+
     value: _T

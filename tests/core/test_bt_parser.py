@@ -12,6 +12,7 @@ def main_xml_file() -> Path:
 
 
 def test_parse_from_file(main_xml_file: Path) -> None:
+    """test that a tree can be parsed from file"""
     expected: Final = """
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4" main_tree_to_execute="main">
@@ -31,11 +32,13 @@ def test_parse_from_file(main_xml_file: Path) -> None:
 
 
 def test_parse_from_string(main_xml_file: Path) -> None:
+    """test that a tree can be parsed from an xml string"""
     from_file = BTWriter.to_xml(BTParser().parse(main_xml_file))
     assert from_file == BTWriter.to_xml(BTParser().parse_string(from_file))
 
 
 def test_ignores_tree_nodes_model() -> None:
+    """test that the tree nodes model tag is ignored"""
     xml = """
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4">
@@ -52,6 +55,7 @@ def test_ignores_tree_nodes_model() -> None:
 
 
 def test_errors_on_invalid_tag() -> None:
+    """test that unrecognized tags are not silently ignored"""
     xml = """
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4">

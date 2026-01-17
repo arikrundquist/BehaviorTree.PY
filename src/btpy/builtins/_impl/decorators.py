@@ -5,14 +5,17 @@ from btpy.core import BehaviorTree, NodeRegistration, NodeStatus
 
 
 class _Decorator(BehaviorTree):
+    @override
     def init(self) -> None:
         super().init()
         (self.__child,) = self.children()
 
     def child(self) -> BehaviorTree:
+        """get the decorated node"""
         return self.__child
 
     def tick_child(self) -> NodeStatus:
+        """tick the child, halting it if it succeeds or fails"""
         match status := self.child().tick():
             case NodeStatus.SUCCESS | NodeStatus.FAILURE:
                 self.child().halt()

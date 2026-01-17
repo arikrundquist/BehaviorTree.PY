@@ -1,6 +1,6 @@
 [project]
 name = "BehaviorTree.PY"
-version = "2026.1.12"
+version = "2026.1.17"
 
 [tool.mypy]
 warn_unused_configs = true

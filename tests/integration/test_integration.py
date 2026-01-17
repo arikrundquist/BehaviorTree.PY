@@ -40,8 +40,8 @@ class _SleepAction(BehaviorTree):
 
 
 @pytest.fixture(autouse=True)
-def register_add_action() -> Iterator[None]:
-    with NodeRegistration.context():
+def register_actions() -> Iterator[None]:
+    with NodeRegistration.scope():
         NodeRegistration.register(_PortMappedAction)
         NodeRegistration.register(_SleepAction)
         yield
@@ -93,6 +93,7 @@ def test_integration(
     expected_observations: list[tuple[str, str]],
     write_back: Callable[[list[tuple[str, str]]], None],
 ) -> None:
+    """test that trees execute as expected"""
     _RecordingObserver.record = []
     tree = BTParser(_RecordingObserver).parse_string(xml)
     for _ in range(tick_count):

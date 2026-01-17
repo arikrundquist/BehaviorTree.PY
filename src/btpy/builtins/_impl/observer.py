@@ -7,6 +7,8 @@ _T = TypeVar("_T")
 
 
 class Observer(BehaviorTree):
+    """a node decorator that observes the status of the non-observer node beneath it"""
+
     __observed: BehaviorTree | None = None
 
     def __init__(self, node: BehaviorTree) -> None:
@@ -15,7 +17,7 @@ class Observer(BehaviorTree):
 
     @abstractmethod
     def observe(self, node: BehaviorTree, status: NodeStatus) -> None:
-        pass
+        """handle the status"""
 
     @final
     @override

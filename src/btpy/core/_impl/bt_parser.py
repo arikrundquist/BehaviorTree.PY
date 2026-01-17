@@ -8,12 +8,16 @@ from btpy.core._impl.node_registration import NodeRegistration
 
 
 class BTParser:
+    """loads `BehaviorTree` objects from xml"""
+
     def __init__(self, *decorators: Callable[[BehaviorTree], BehaviorTree]) -> None:
+        """create a `BTParser` that applies `decorators` to each node it constructs"""
         self._main_tree: str | None = None
         self._tree_descriptions = dict[str, XML.Element]()
         self._decorators = decorators
 
     def parse(self, path: Path, blackboard: Blackboard | None = None) -> RootTree:
+        """load a `BehaviorTree` from file"""
         return self._parse(path, first=True).get(
             *self._decorators, global_blackboard=blackboard
         )
@@ -21,18 +25,22 @@ class BTParser:
     def parse_string(
         self, xml: str, cwd: Path = Path(), blackboard: Blackboard | None = None
     ) -> RootTree:
+        """load a `BehaviorTree` from an xml string"""
         return self._parse_string(xml, cwd, first=True).get(
             *self._decorators, global_blackboard=blackboard
         )
 
     def _parse(self, path: Path, first: bool) -> Self:
+        """load the tree description from file"""
         with open(path, "r") as f:
             return self._parse_string(f.read(), path.parent, first=first)
 
     def _parse_string(self, xml: str, cwd: Path, first: bool) -> Self:
+        """load the tree description from an xml string"""
         return self._from_xml(XML.fromstring(xml), cwd, first=first)
 
     def _from_xml(self, xml: XML.Element, cwd: Path, first: bool) -> Self:
+        """load the tree description from an `XML.Element`"""
         assert xml.tag == "root"
         assert xml.attrib["BTCPP_format"] == "4"
         if first:
@@ -65,16 +73,18 @@ class BTParser:
         *decorators: Callable[[BehaviorTree], BehaviorTree],
         global_blackboard: Blackboard | None = None,
     ) -> RootTree:
+        """instantiate the loaded tree description"""
         assert self._main_tree is not None
         assert self._main_tree in self._tree_descriptions
         return RootTree(
             self._main_tree,
-            self.load(self._tree_descriptions[self._main_tree], *decorators),
+            self._load(self._tree_descriptions[self._main_tree], *decorators),
         ).attach_blackboard(global_blackboard or Blackboard())
 
-    def load(
+    def _load(
         self, xml: XML.Element, *decorators: Callable[[BehaviorTree], BehaviorTree]
     ) -> BehaviorTree:
+        """instantiate the tree from the `xml` description"""
         name = xml.tag
         attrs = xml.attrib.copy()
 
@@ -82,13 +92,13 @@ class BTParser:
             name = attrs.pop("ID")
             assert len(xml) == 0
             return SubTree(
-                name, self.load(self._tree_descriptions[name], *decorators), **attrs
+                name, self._load(self._tree_descriptions[name], *decorators), **attrs
             )
 
         if name == "Action":
             name = attrs.pop("ID")
 
-        children = [self.load(child, *decorators) for child in xml]
+        children = [self._load(child, *decorators) for child in xml]
         loaded = NodeRegistration.get(name)(children, **attrs)
         assert loaded.class_name() == name
         for decorator in decorators:

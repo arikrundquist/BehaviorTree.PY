@@ -3,6 +3,7 @@ from btpy.core import BlackboardChildType
 
 
 def test_top_level_blackboard() -> None:
+    """test basic blackboard functionality"""
     uut = Blackboard()
     uut.set("key 1", "value 1")
     uut.set("key 2", "value 2")
@@ -20,6 +21,7 @@ def test_top_level_blackboard() -> None:
 
 
 def test_multi_level_blackboard() -> None:
+    """test blackboards can get values from up their hierarchy"""
     uut = Blackboard()
     for i in range(1, 4):
         uut = uut.create_child(BlackboardChildType.CHILD)
@@ -38,6 +40,7 @@ def test_multi_level_blackboard() -> None:
 
 
 def test_top_level_world_blackboard() -> None:
+    """test that a top level blackboard is its own world blackboard"""
     uut = Blackboard()
     uut.set("key 1", "value 1")
     uut.set("key 2", "value 2")
@@ -62,6 +65,7 @@ def test_top_level_world_blackboard() -> None:
 
 
 def test_different_world_and_parent() -> None:
+    """test that blackboards delegate correctly to either their parent or their world"""
     parent = Blackboard()
     world = Blackboard()
 
@@ -77,6 +81,7 @@ def test_different_world_and_parent() -> None:
 
 
 def test_clean_child() -> None:
+    """test that a clean child can affect its parent except through the world"""
     parent = Blackboard()
     uut = parent.create_child(BlackboardChildType.CLEAN)
     uut.set("key", "value")
@@ -92,6 +97,7 @@ def test_clean_child() -> None:
 
 
 def test_remapped_child() -> None:
+    """test that a remapped child can affect its parent except for private ports"""
     parent = Blackboard()
     uut = parent.create_child(BlackboardChildType.REMAPPED)
     uut.set("key", "value")
@@ -117,6 +123,7 @@ def test_remapped_child() -> None:
 
 
 def test_port_remapping() -> None:
+    """test that remapped ports reference the same data"""
     uut1 = Blackboard()
     uut2 = Blackboard()
 
@@ -145,6 +152,7 @@ def test_port_remapping() -> None:
 
 
 def test_get_transformation() -> None:
+    """test that the requested transform is applied"""
     uut = Blackboard()
     uut.set("int", 12)
     uut.set("str", "24")

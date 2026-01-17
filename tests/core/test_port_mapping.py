@@ -20,18 +20,20 @@ class _AddAction(BehaviorTree):
 
 @pytest.fixture(autouse=True)
 def register_add_action() -> Iterator[None]:
-    with NodeRegistration.context():
+    with NodeRegistration.scope():
         NodeRegistration.register(_AddAction)
         yield
 
 
 def test_name_mapping() -> None:
+    """test that nodes receive their name from the blackboard if possible"""
     assert _AddAction().attach_blackboard(Blackboard()).name() == "_AddAction"
     assert _AddAction(name="adder").attach_blackboard(Blackboard()).name() == "adder"
 
 
 @pytest.mark.parametrize("x,y", [(x, y) for x in range(3) for y in range(3)])
 def test_no_port_mapping(x: int, y: int) -> None:
+    """test that nodes without remapped ports can still access ports on the blackboard"""
     description = """
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4" main_tree_to_execute="main">
@@ -50,6 +52,7 @@ def test_no_port_mapping(x: int, y: int) -> None:
 
 @pytest.mark.parametrize("data", range(3))
 def test_basic_port_mapping(data: int) -> None:
+    """test that nodes can be remapped to different ports"""
     description = """
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4" main_tree_to_execute="main">
@@ -72,6 +75,7 @@ def test_basic_port_mapping(data: int) -> None:
 
 @pytest.mark.parametrize("x,y", [(x, y) for x in range(3) for y in range(3)])
 def test_complex_port_mapping(x: int, y: int) -> None:
+    """test that nodes can be remapped to different ports across subtrees"""
     description = """
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4" main_tree_to_execute="main">
@@ -102,6 +106,7 @@ def test_complex_port_mapping(x: int, y: int) -> None:
 
 @pytest.mark.parametrize("x,y", [(x, y) for x in range(3) for y in range(3)])
 def test_auto_remapping(x: int, y: int) -> None:
+    """test that autoremapping makes ports available to subtrees"""
     description = """
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4" main_tree_to_execute="main">
@@ -126,6 +131,7 @@ def test_auto_remapping(x: int, y: int) -> None:
 
 @pytest.mark.parametrize("x,y", [(x, y) for x in range(3) for y in range(3)])
 def test_auto_remapping_private(x: int, y: int) -> None:
+    """test that autoremapping does not make private ports available to subtrees"""
     description = """
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4" main_tree_to_execute="main">
@@ -152,6 +158,7 @@ def test_auto_remapping_private(x: int, y: int) -> None:
 
 @pytest.mark.parametrize("x,y", [(x, y) for x in range(3) for y in range(3)])
 def test_global_blackboard(x: int, y: int) -> None:
+    """test that nodes can interact with the global blackboard"""
     description = """
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4" main_tree_to_execute="main">
@@ -178,6 +185,7 @@ def test_global_blackboard(x: int, y: int) -> None:
 
 @pytest.mark.parametrize("x,y", [(x, y) for x in range(3) for y in range(3)])
 def test_bad_port_mapping(x: int, y: int) -> None:
+    """test that remapping a port does not magically populate it with data"""
     description = """
 <?xml version="1.0" encoding="UTF-8"?>
 <root BTCPP_format="4" main_tree_to_execute="main">
@@ -185,7 +193,7 @@ def test_bad_port_mapping(x: int, y: int) -> None:
     <Sequence>
       <_AddAction />
       <SubTree ID="add" x="{z}" y="{z}" z="{result}" />
-      <SubTree ID="add" x="{bad1}" y="{bad2}" z="{z}" />
+      <SubTree ID="add" x="{bad1}" y="{bad2}" z="{result}" />
     </Sequence>
   </BehaviorTree>
 

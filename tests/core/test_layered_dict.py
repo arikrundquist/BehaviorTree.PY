@@ -3,6 +3,7 @@ from btpy.core import LayeredDict
 
 
 def test_single_layered_dict() -> None:
+    """test the basic layered dict functionality"""
     uut = LayeredDict[str, str]()
     uut["key 1"] = "value 1"
     uut["key 2"] = "value 2"
@@ -22,6 +23,7 @@ def test_single_layered_dict() -> None:
 
 
 def test_multi_layered_dict() -> None:
+    """test that layered dicts transparently extend their parent"""
     prev: LayeredDict[str, str] | None = None
     for i in range(1, 4):
         uut = LayeredDict[str, str](prev)
@@ -43,6 +45,7 @@ def test_multi_layered_dict() -> None:
 
 
 def test_layered_dict_errors() -> None:
+    """test that layered dicts error on bad key access"""
     uut = LayeredDict[str, str]()
     unexpected = "unexpected"
 

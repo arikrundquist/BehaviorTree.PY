@@ -35,6 +35,7 @@ class _EchoAction(BehaviorTree):
     ],
 )
 def test_inverter(status: NodeStatus, final: NodeStatus) -> None:
+    """test the inverter decorator"""
     child = _EchoAction()
     child.status = status
     assert Inverter([child]).tick() == final
@@ -50,6 +51,7 @@ def test_inverter(status: NodeStatus, final: NodeStatus) -> None:
     ],
 )
 def test_force_success(status: NodeStatus, final: NodeStatus) -> None:
+    """test the force success decorator"""
     child = _EchoAction()
     child.status = status
     assert ForceSuccess([child]).tick() == final
@@ -65,6 +67,7 @@ def test_force_success(status: NodeStatus, final: NodeStatus) -> None:
     ],
 )
 def test_force_failure(status: NodeStatus, final: NodeStatus) -> None:
+    """test the force failure decorator"""
     child = _EchoAction()
     child.status = status
     assert ForceFailure([child]).tick() == final
@@ -103,6 +106,7 @@ def test_repeat(
     status_sequence: list[tuple[int, NodeStatus]],
     expected_status: NodeStatus,
 ) -> None:
+    """test the repeat decorator"""
     blackboard = Blackboard()
     blackboard.set("num_cycles", num_cycles)
 
@@ -128,6 +132,7 @@ def test_retry_until_successful(
     status_sequence: list[tuple[int, NodeStatus]],
     expected_status: NodeStatus,
 ) -> None:
+    """test the retry until successful decorator"""
     blackboard = Blackboard()
     blackboard.set("num_attempts", num_attempts)
 
@@ -151,6 +156,7 @@ def test_keep_running_until_failure(
     child_status: NodeStatus,
     expected_status: NodeStatus,
 ) -> None:
+    """test the keep running until failure decorator"""
     echo = _EchoAction()
     echo.status = child_status
 
@@ -169,6 +175,7 @@ def test_keep_running_until_failure(
 def test_delay(
     delay_msec: int | None, sleep_time: float, expected_status: NodeStatus
 ) -> None:
+    """test the delay decorator"""
     blackboard = Blackboard()
     blackboard.set("delay_msec", delay_msec)
 
@@ -183,6 +190,7 @@ def test_delay(
 
 @pytest.mark.parametrize("delay_msec", [10])
 def test_halt_delay(delay_msec: int) -> None:
+    """test the delay decorator restarts on halt"""
     blackboard = Blackboard()
     blackboard.set("delay_msec", delay_msec)
 
@@ -214,6 +222,7 @@ def test_run_once(
     status_sequence: list[NodeStatus],
     expected_status: NodeStatus,
 ) -> None:
+    """test the run once decorator"""
     blackboard = Blackboard()
     blackboard.set("then_skip", then_skip)
 

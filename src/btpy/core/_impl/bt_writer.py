@@ -2,8 +2,11 @@ from btpy.core._impl.behavior_tree import BehaviorTree, SubTree
 
 
 class BTWriter:
+    """formats `BehaviorTree` objects as xml"""
+
     @staticmethod
     def to_xml(tree: SubTree, indent: str | int = "\t") -> str:
+        """format the `tree` as xml"""
         if isinstance(indent, int):
             return BTWriter.to_xml(tree, " " * indent)
 
@@ -18,11 +21,13 @@ class BTWriter:
         self._seen_subtrees = set[str]()
 
     def _get_port_attrs(self, node: BehaviorTree) -> str:
+        """format the `node`'s ports as xml attributes"""
         return "".join(
-            f' {name}="{value}"' for (name, value) in node.mappings().items()
+            f' {name}="{value}"' for (name, value) in sorted(node.mappings().items())
         )
 
     def _get_subtree_xml(self, tree: SubTree, indent: str, level: int) -> str:
+        """format the `tree` as an xml subtree description"""
         name = tree.class_name()
         if name in self._seen_subtrees:
             return ""
@@ -34,6 +39,7 @@ class BTWriter:
 """
 
     def _to_xml(self, node: BehaviorTree, indent: str, level: int) -> str:
+        """format the `node` as xml"""
         name = node.class_name()
         attrs = self._get_port_attrs(node)
         children = node.children()

@@ -20,6 +20,8 @@ _T = TypeVar("_T")
 
 
 class BehaviorTree(ABC):
+    """a node in a behavior tree"""
+
     def __init__(
         self, __children: list["BehaviorTree"] | None = None, **ports: str
     ) -> None:
@@ -29,35 +31,44 @@ class BehaviorTree(ABC):
         self.init()
 
     def init(self) -> None:
+        """initialize the node"""
         self.__blackboard: Blackboard | None = None
 
     @final
     def children(self) -> Sequence["BehaviorTree"]:
+        """get the node's children"""
         return self.__children
 
     @final
     def mappings(self) -> dict[str, str]:
+        """get the node's remapped ports"""
         return self.__ports
 
     @abstractmethod
     def tick(self) -> NodeStatus:
+        """tick the node"""
         pass
 
     def halt(self) -> None:
+        """halt the node"""
         for child in self.children():
             child.halt()
 
     def class_name(self) -> str:
+        """get the name of the node's type"""
         return self.__class__.__name__
 
     def name(self) -> str:
+        """get the name of the node"""
         return self.get("name", str).value or self.class_name()
 
     def make_blackboard(self, parent: Blackboard) -> Blackboard:
+        """create a blackboard suitable for the node to use"""
         return parent.create_child(BlackboardChildType.CHILD)
 
     @final
     def attach_blackboard(self, blackboard: Blackboard) -> Self:
+        """attach the `blackboard` to the node"""
         assert self.__blackboard is None
         self.__blackboard = self.make_blackboard(blackboard)
         Blackboard.remap(blackboard, self.__blackboard, self.mappings())
@@ -69,16 +80,19 @@ class BehaviorTree(ABC):
 
     @final
     def __iter__(self) -> Iterator["BehaviorTree"]:
+        """iterate over all of the nodes in the tree"""
         yield self
         for child in self.children():
             yield from child
 
     @overload
     def get(self, key: str) -> Pointer[Any | None]:
+        """get the value at the specified port"""
         pass
 
     @overload
     def get(self, key: str, converter: Callable[[Any], _T]) -> Pointer[_T | None]:
+        """get the value at the specified port and attempt to convert its type"""
         pass
 
     def get(
@@ -91,6 +105,7 @@ class BehaviorTree(ABC):
         return ptr
 
     def get_bool(self, key: str) -> Pointer[bool | None]:
+        """get the bool at the specified port"""
         ptr = self.get(key)
         match ptr.value:
             case "true":
@@ -104,6 +119,8 @@ class BehaviorTree(ABC):
 
 
 class SubTree(BehaviorTree):
+    """a subtree"""
+
     def __init__(self, __name: str, __child: BehaviorTree, **ports: str) -> None:
         super().__init__([__child], **ports)
         self.__name: Final = __name
@@ -115,10 +132,12 @@ class SubTree(BehaviorTree):
 
     @override
     def class_name(self) -> str:
+        """get the name of the subtree"""
         return self.__name
 
     @override
     def make_blackboard(self, parent: Blackboard) -> Blackboard:
+        """create a clean blackboard for the subtree"""
         return parent.create_child(
             BlackboardChildType.REMAPPED
             if self.__autoremap
@@ -127,13 +146,18 @@ class SubTree(BehaviorTree):
 
     @override
     def tick(self) -> NodeStatus:
+        """tick the subtree"""
         return self.child().tick()
 
     def child(self) -> BehaviorTree:
+        """get the root of the subtree"""
         return self.__child
 
 
 class RootTree(SubTree):
+    """a top level subtree"""
+
     @override
     def make_blackboard(self, parent: Blackboard) -> Blackboard:
+        """special case: the root tree should not create a clean blackboard"""
         return BehaviorTree.make_blackboard(self, parent)
