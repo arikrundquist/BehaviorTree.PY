@@ -45,13 +45,15 @@ class Sequence(SequenceWithMemory):
 class ReactiveSequence(BehaviorTree):
     @override
     def tick(self) -> NodeStatus:
-        for child in self.children():
+        for i, child in enumerate(self.children()):
             match child.tick():
                 case NodeStatus.FAILURE:
                     self.halt()
                     return NodeStatus.FAILURE
 
                 case NodeStatus.RUNNING:
+                    for sibling in self.children()[i + 1 :]:
+                        sibling.halt()
                     return NodeStatus.RUNNING
 
                 case NodeStatus.SKIPPED | NodeStatus.SUCCESS:

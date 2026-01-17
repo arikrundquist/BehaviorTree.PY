@@ -1,0 +1,8 @@
+child 1,FAILURE
+inverter,SUCCESS
+child 1,RUNNING
+inverter,RUNNING
+child 1,SKIPPED
+inverter,SKIPPED
+child 1,SUCCESS
+inverter,FAILURE

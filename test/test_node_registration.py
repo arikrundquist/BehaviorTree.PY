@@ -7,7 +7,7 @@ class _FakeNode(Sequence):
 
 
 def test_node_registration() -> None:
-    name = _FakeNode().name()
+    name = _FakeNode().class_name()
     assert not NodeRegistration.has(name)
     with NodeRegistration.context():
         NodeRegistration.register(_FakeNode)

@@ -1,0 +1,19 @@
+no delay,FAILURE
+delay,RUNNING
+sleep,SUCCESS
+keep running until failure,RUNNING
+reactive fallback,RUNNING
+no delay,FAILURE
+delay,RUNNING
+sleep,SUCCESS
+keep running until failure,RUNNING
+reactive fallback,RUNNING
+no delay,FAILURE
+child 1,SUCCESS
+delay,SUCCESS
+reactive fallback,SUCCESS
+no delay,FAILURE
+delay,RUNNING
+sleep,SUCCESS
+keep running until failure,RUNNING
+reactive fallback,RUNNING

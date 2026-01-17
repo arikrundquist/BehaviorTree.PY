@@ -196,7 +196,7 @@ def test_halt_delay(delay_msec: int) -> None:
     uut = Delay([echo]).attach_blackboard(blackboard)
     assert uut.tick() == NodeStatus.RUNNING
 
-    time.sleep(delay_msec / 1000)
+    time.sleep(delay_msec / 1_000)
     assert uut.tick() == NodeStatus.SUCCESS
 
     uut.halt()

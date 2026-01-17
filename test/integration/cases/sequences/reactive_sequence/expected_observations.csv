@@ -1,0 +1,15 @@
+child 1,RUNNING
+reactive sequence,RUNNING
+child 1,RUNNING
+reactive sequence,RUNNING
+child 1,FAILURE
+reactive sequence,FAILURE
+child 1,SUCCESS
+child 2,RUNNING
+reactive sequence,RUNNING
+child 1,SUCCESS
+child 2,FAILURE
+reactive sequence,FAILURE
+child 1,SUCCESS
+child 2,SUCCESS
+reactive sequence,SUCCESS

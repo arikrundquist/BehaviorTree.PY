@@ -1,0 +1,17 @@
+no num cycles,FAILURE
+bad num cycles,FAILURE
+child 1,SUCCESS
+child 1,SUCCESS
+child 1,SUCCESS
+child 1,RUNNING
+repeat forever 1,RUNNING
+child 2,SUCCESS
+child 2,SUCCESS
+child 2,SUCCESS
+child 2,SKIPPED
+repeat forever 2,SKIPPED
+child 3,SUCCESS
+child 3,SUCCESS
+child 3,SUCCESS
+repeat thrice,SUCCESS
+reactive fallback,SUCCESS

@@ -1,0 +1,25 @@
+child 1,RUNNING
+run once skip,RUNNING
+sequence,RUNNING
+child 1,RUNNING
+run once skip,RUNNING
+sequence,RUNNING
+child 1,RUNNING
+run once skip,RUNNING
+sequence,RUNNING
+child 1,FAILURE
+run once skip,FAILURE
+sequence,FAILURE
+run once skip,SKIPPED
+child 2,RUNNING
+run once no skip,RUNNING
+sequence,RUNNING
+child 2,RUNNING
+run once no skip,RUNNING
+sequence,RUNNING
+child 2,SUCCESS
+run once no skip,SUCCESS
+sequence,SUCCESS
+run once skip,SKIPPED
+run once no skip,SUCCESS
+sequence,SUCCESS

@@ -10,7 +10,7 @@ class BTWriter:
         writer = BTWriter()
         subtrees = (node for node in tree if isinstance(node, SubTree))
         return f"""<?xml version="1.0" encoding="UTF-8"?>
-<root BTCPP_format="4" main_tree_to_execute="{tree.name()}">
+<root BTCPP_format="4" main_tree_to_execute="{tree.class_name()}">
 {"".join(writer._get_subtree_xml(subtree, indent=indent, level=1) for subtree in subtrees)}</root>
 """
 
@@ -23,7 +23,7 @@ class BTWriter:
         )
 
     def _get_subtree_xml(self, tree: SubTree, indent: str, level: int) -> str:
-        name = tree.name()
+        name = tree.class_name()
         if name in self._seen_subtrees:
             return ""
 
@@ -34,7 +34,7 @@ class BTWriter:
 """
 
     def _to_xml(self, node: BehaviorTree, indent: str, level: int) -> str:
-        name = node.name()
+        name = node.class_name()
         attrs = self._get_port_attrs(node)
         children = node.children()
 

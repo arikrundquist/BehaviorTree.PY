@@ -46,8 +46,11 @@ class BehaviorTree(ABC):
         for child in self.children():
             child.halt()
 
-    def name(self) -> str:
+    def class_name(self) -> str:
         return self.__class__.__name__
+
+    def name(self) -> str:
+        return self.get("name", str).value or self.class_name()
 
     def make_blackboard(self, parent: Blackboard) -> Blackboard:
         return parent.create_child(BlackboardChildType.CHILD)
@@ -110,7 +113,7 @@ class SubTree(BehaviorTree):
         self.__autoremap = autoremap == "true"
 
     @override
-    def name(self) -> str:
+    def class_name(self) -> str:
         return self.__name
 
     @override

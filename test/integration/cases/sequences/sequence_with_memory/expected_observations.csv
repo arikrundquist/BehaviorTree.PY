@@ -1,0 +1,11 @@
+child 1,FAILURE
+sequence with memory,FAILURE
+child 1,RUNNING
+sequence with memory,RUNNING
+child 1,SUCCESS
+child 2,FAILURE
+sequence with memory,FAILURE
+child 2,RUNNING
+sequence with memory,RUNNING
+child 2,SUCCESS
+sequence with memory,SUCCESS

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4" main_tree_to_execute="main">
+  <BehaviorTree ID="main">
+    <ReactiveFallback name="reactive fallback">
+      <Delay name="no delay">
+        <SubTree ID="mapped" name="bad" />
+      </Delay>
+      <Delay name="delay" delay_msec="20">
+        <SubTree ID="mapped" name="child 1" _1="SUCCESS" _2="SUCCESS" />
+      </Delay>
+      <KeepRunningUntilFailure name="keep running until failure">
+        <_SleepAction name="sleep" sleep_msec="10" />
+      </KeepRunningUntilFailure>
+    </ReactiveFallback>
+  </BehaviorTree>
+
+  <BehaviorTree ID="mapped">
+    <_PortMappedAction />
+  </BehaviorTree>
+</root>

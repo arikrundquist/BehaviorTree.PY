@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4" main_tree_to_execute="main">
+  <BehaviorTree ID="main">
+    <Sequence name="sequence">
+      <RunOnce name="run once skip">
+        <SubTree ID="mapped" name="child 1" _1="RUNNING" _2="RUNNING" _3="RUNNING" _4="FAILURE" />
+      </RunOnce>
+      <RunOnce name="run once no skip" then_skip="false">
+        <SubTree ID="mapped" name="child 2" _1="RUNNING" _2="RUNNING" _3="SUCCESS" _4="SKIPPED" />
+      </RunOnce>
+    </Sequence>
+  </BehaviorTree>
+
+  <BehaviorTree ID="mapped">
+    <_PortMappedAction />
+  </BehaviorTree>
+</root>

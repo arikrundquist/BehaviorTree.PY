@@ -1,0 +1,17 @@
+no num attempts,FAILURE
+bad num attempts,FAILURE
+child 1,FAILURE
+child 1,FAILURE
+child 1,FAILURE
+child 1,RUNNING
+retry forever 1,RUNNING
+child 2,FAILURE
+child 2,FAILURE
+child 2,FAILURE
+child 2,SKIPPED
+retry forever 2,SKIPPED
+child 3,FAILURE
+child 3,FAILURE
+child 3,FAILURE
+retry thrice,FAILURE
+reactive fallback,RUNNING

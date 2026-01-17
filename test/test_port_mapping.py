@@ -30,6 +30,11 @@ def register_add_action() -> Iterator[None]:
         yield
 
 
+def test_name_mapping() -> None:
+    assert _AddAction().attach_blackboard(Blackboard()).name() == "_AddAction"
+    assert _AddAction(name="adder").attach_blackboard(Blackboard()).name() == "adder"
+
+
 @pytest.mark.parametrize("x,y", [(x, y) for x in range(3) for y in range(3)])
 def test_no_port_mapping(x: int, y: int) -> None:
     description = """

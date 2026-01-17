@@ -1,0 +1,14 @@
+child 1,FAILURE
+child 2,RUNNING
+reactive fallback,RUNNING
+child 1,SKIPPED
+child 2,SUCCESS
+reactive fallback,SUCCESS
+child 1,SKIPPED
+child 2,SKIPPED
+reactive fallback,FAILURE
+child 1,RUNNING
+child 2,FAILURE
+reactive fallback,RUNNING
+child 1,SUCCESS
+reactive fallback,SUCCESS

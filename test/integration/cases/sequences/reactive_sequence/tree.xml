@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4" main_tree_to_execute="main">
+  <BehaviorTree ID="main">
+    <ReactiveSequence name="reactive sequence">
+      <SubTree ID="mapped" name="child 1" _1="RUNNING" _2="RUNNING" _3="FAILURE" _4="SUCCESS" _5="SUCCESS" _6="SUCCESS" />
+      <SubTree ID="mapped" name="child 2"  _1="RUNNING" _2="FAILURE" _3="SUCCESS" />
+    </ReactiveSequence>
+  </BehaviorTree>
+
+  <BehaviorTree ID="mapped">
+    <_PortMappedAction />
+  </BehaviorTree>
+</root>

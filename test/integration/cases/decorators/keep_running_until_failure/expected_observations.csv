@@ -1,0 +1,8 @@
+child 1,FAILURE
+keep running until failure,FAILURE
+child 1,RUNNING
+keep running until failure,RUNNING
+child 1,SKIPPED
+keep running until failure,SKIPPED
+child 1,SUCCESS
+keep running until failure,RUNNING

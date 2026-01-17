@@ -1,0 +1,8 @@
+child 1,FAILURE
+force failure,FAILURE
+child 1,RUNNING
+force failure,RUNNING
+child 1,SKIPPED
+force failure,FAILURE
+child 1,SUCCESS
+force failure,FAILURE

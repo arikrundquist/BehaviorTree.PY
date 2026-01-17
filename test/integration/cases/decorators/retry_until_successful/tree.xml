@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4" main_tree_to_execute="main">
+  <BehaviorTree ID="main">
+    <ReactiveFallback name="reactive fallback">
+      <RetryUntilSuccessful name="no num attempts">
+        <SubTree ID="mapped" name="bad 1" />
+      </RetryUntilSuccessful>
+      <RetryUntilSuccessful name="bad num attempts" num_attempts="-13">
+        <SubTree ID="mapped" name="bad 2" />
+      </RetryUntilSuccessful>
+      <RetryUntilSuccessful name="retry forever 1" num_attempts="-1">
+        <SubTree ID="mapped" name="child 1" _1="FAILURE" _2="FAILURE" _3="FAILURE" _4="RUNNING" />
+      </RetryUntilSuccessful>
+      <RetryUntilSuccessful name="retry forever 2" num_attempts="-1">
+        <SubTree ID="mapped" name="child 2" _1="FAILURE" _2="FAILURE" _3="FAILURE" _4="SKIPPED" />
+      </RetryUntilSuccessful>
+      <RetryUntilSuccessful name="retry thrice" num_attempts="3">
+        <SubTree ID="mapped" name="child 3" _1="FAILURE" _2="FAILURE" _3="FAILURE" _4="SUCCESS" />
+      </RetryUntilSuccessful>
+    </ReactiveFallback>
+  </BehaviorTree>
+
+  <BehaviorTree ID="mapped">
+    <_PortMappedAction />
+  </BehaviorTree>
+</root>

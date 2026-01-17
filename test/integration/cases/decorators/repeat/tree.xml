@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4" main_tree_to_execute="main">
+  <BehaviorTree ID="main">
+    <ReactiveFallback name="reactive fallback">
+      <Repeat name="no num cycles">
+        <SubTree ID="mapped" name="bad 1" />
+      </Repeat>
+      <Repeat name="bad num cycles" num_cycles="-13">
+        <SubTree ID="mapped" name="bad 2" />
+      </Repeat>
+      <Repeat name="repeat forever 1" num_cycles="-1">
+        <SubTree ID="mapped" name="child 1" _1="SUCCESS" _2="SUCCESS" _3="SUCCESS" _4="RUNNING" />
+      </Repeat>
+      <Repeat name="repeat forever 2" num_cycles="-1">
+        <SubTree ID="mapped" name="child 2" _1="SUCCESS" _2="SUCCESS" _3="SUCCESS" _4="SKIPPED" />
+      </Repeat>
+      <Repeat name="repeat thrice" num_cycles="3">
+        <SubTree ID="mapped" name="child 3" _1="SUCCESS" _2="SUCCESS" _3="SUCCESS" _4="FAILURE" />
+      </Repeat>
+    </ReactiveFallback>
+  </BehaviorTree>
+
+  <BehaviorTree ID="mapped">
+    <_PortMappedAction />
+  </BehaviorTree>
+</root>

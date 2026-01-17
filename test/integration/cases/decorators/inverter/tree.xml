@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root BTCPP_format="4" main_tree_to_execute="main">
+  <BehaviorTree ID="main">
+    <Inverter name="inverter">
+      <SubTree ID="mapped" name="child 1" _1="FAILURE" _2="RUNNING" _3="SKIPPED" _4="SUCCESS" />
+    </Inverter>
+  </BehaviorTree>
+
+  <BehaviorTree ID="mapped">
+    <_PortMappedAction />
+  </BehaviorTree>
+</root>

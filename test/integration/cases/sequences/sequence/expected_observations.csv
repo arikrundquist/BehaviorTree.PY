@@ -1,0 +1,12 @@
+child 1,FAILURE
+sequence,FAILURE
+child 1,RUNNING
+sequence,RUNNING
+child 1,SUCCESS
+child 2,RUNNING
+sequence,RUNNING
+child 2,FAILURE
+sequence,FAILURE
+child 1,SUCCESS
+child 2,SUCCESS
+sequence,SUCCESS
