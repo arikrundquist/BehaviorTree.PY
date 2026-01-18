@@ -26,7 +26,7 @@ class _Decorator(BehaviorTree):
 @NodeRegistration.register
 class Inverter(_Decorator):
     @override
-    def tick(self) -> NodeStatus:
+    def _do_tick(self) -> NodeStatus:
         match status := self.tick_child():
             case NodeStatus.SUCCESS:
                 return NodeStatus.FAILURE
@@ -41,7 +41,7 @@ class Inverter(_Decorator):
 @NodeRegistration.register
 class ForceSuccess(_Decorator):
     @override
-    def tick(self) -> NodeStatus:
+    def _do_tick(self) -> NodeStatus:
         match self.tick_child():
             case NodeStatus.RUNNING:
                 return NodeStatus.RUNNING
@@ -53,7 +53,7 @@ class ForceSuccess(_Decorator):
 @NodeRegistration.register
 class ForceFailure(_Decorator):
     @override
-    def tick(self) -> NodeStatus:
+    def _do_tick(self) -> NodeStatus:
         match self.tick_child():
             case NodeStatus.RUNNING:
                 return NodeStatus.RUNNING
@@ -65,7 +65,7 @@ class ForceFailure(_Decorator):
 @NodeRegistration.register
 class Repeat(_Decorator):
     @override
-    def tick(self) -> NodeStatus:
+    def _do_tick(self) -> NodeStatus:
         num_cycles = self.get("num_cycles", int).value
         if num_cycles is None or num_cycles < -1:
             return NodeStatus.FAILURE
@@ -96,7 +96,7 @@ class Repeat(_Decorator):
 @NodeRegistration.register
 class RetryUntilSuccessful(_Decorator):
     @override
-    def tick(self) -> NodeStatus:
+    def _do_tick(self) -> NodeStatus:
         num_attempts = self.get("num_attempts", int).value
         if num_attempts is None or num_attempts < -1:
             return NodeStatus.FAILURE
@@ -127,7 +127,7 @@ class RetryUntilSuccessful(_Decorator):
 @NodeRegistration.register
 class KeepRunningUntilFailure(_Decorator):
     @override
-    def tick(self) -> NodeStatus:
+    def _do_tick(self) -> NodeStatus:
         match status := self.tick_child():
             case NodeStatus.FAILURE | NodeStatus.SKIPPED:
                 return status
@@ -148,7 +148,7 @@ class Delay(_Decorator):
         self.__start_time = None
 
     @override
-    def tick(self) -> NodeStatus:
+    def _do_tick(self) -> NodeStatus:
         self.__start_time = self.__start_time or time.time_ns()
         delay = self.get("delay_msec", int).value
         if delay is None:
@@ -169,7 +169,7 @@ class RunOnce(_Decorator):
         self.__final_status: NodeStatus | None = None
 
     @override
-    def tick(self) -> NodeStatus:
+    def _do_tick(self) -> NodeStatus:
         if self.__final_status is None:
             match status := self.tick_child():
                 case NodeStatus.RUNNING:

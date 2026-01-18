@@ -6,7 +6,7 @@ from btpy import BehaviorTree, Blackboard, BTParser, NodeRegistration, NodeStatu
 
 class _AddAction(BehaviorTree):
     @override
-    def tick(self) -> NodeStatus:
+    def _do_tick(self) -> NodeStatus:
         x = self.get("x", int)
         y = self.get("y", int)
         z = self.get("z", int)

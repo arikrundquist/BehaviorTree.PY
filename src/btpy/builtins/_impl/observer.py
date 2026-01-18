@@ -1,5 +1,6 @@
 from abc import abstractmethod
-from typing import Final, TypeVar, final, override
+from contextlib import contextmanager
+from typing import Final, Iterator, TypeVar, final, override
 
 from btpy.core import BehaviorTree, NodeStatus
 
@@ -9,22 +10,24 @@ _T = TypeVar("_T")
 class Observer(BehaviorTree):
     """a node decorator that observes the status of the non-observer node beneath it"""
 
-    __observed: BehaviorTree | None = None
-
     def __init__(self, node: BehaviorTree) -> None:
         super().__init__([node])
         self.__node: Final = node
+        self.__observed: Final = self._find_observed()
+
+    def _find_observed(self) -> BehaviorTree:
+        """find the first non-observer descendent"""
+        return (
+            self.__node.__observed if isinstance(self.__node, Observer) else self.__node
+        )
 
     @abstractmethod
-    def observe(self, node: BehaviorTree, status: NodeStatus) -> None:
-        """handle the status"""
+    @contextmanager
+    def observe(self, node: BehaviorTree) -> Iterator[None]:
+        """context for observing the node upon entry and exit"""
 
     @final
     @override
-    def tick(self) -> NodeStatus:
-        status = self.__node.tick()
-        if not isinstance(self.__node, Observer):
-            Observer.__observed = self.__node
-        assert Observer.__observed is not None
-        self.observe(Observer.__observed, status)
-        return status
+    def _do_tick(self) -> NodeStatus:
+        with self.observe(self.__observed):
+            return self.__node.tick()

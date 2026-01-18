@@ -1,5 +1,6 @@
 import csv
 import time
+from contextlib import contextmanager
 from pathlib import Path
 from typing import Callable, Iterator, override
 
@@ -12,8 +13,10 @@ class _RecordingObserver(Observer):
     record = list[tuple[BehaviorTree, NodeStatus]]()
 
     @override
-    def observe(self, node: BehaviorTree, status: NodeStatus) -> None:
-        _RecordingObserver.record.append((node, status))
+    @contextmanager
+    def observe(self, node: BehaviorTree) -> Iterator[None]:
+        yield
+        _RecordingObserver.record.append((node, node.status()))
 
 
 class _PortMappedAction(BehaviorTree):
@@ -22,7 +25,7 @@ class _PortMappedAction(BehaviorTree):
         self._idx = 0
 
     @override
-    def tick(self) -> NodeStatus:
+    def _do_tick(self) -> NodeStatus:
         self._idx = self._idx + 1
         status = self.get(f"_{self._idx}", str).value
         assert status is not None
@@ -31,7 +34,7 @@ class _PortMappedAction(BehaviorTree):
 
 class _SleepAction(BehaviorTree):
     @override
-    def tick(self) -> NodeStatus:
+    def _do_tick(self) -> NodeStatus:
         delay = self.get("sleep_msec", int).value
         if delay is None:
             return NodeStatus.FAILURE

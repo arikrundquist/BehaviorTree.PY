@@ -18,11 +18,11 @@ from btpy.builtins import (
 class _EchoAction(BehaviorTree):
     def init(self) -> None:
         super().init()
-        self.status = NodeStatus.SUCCESS
+        self.next_status = NodeStatus.SUCCESS
 
     @override
-    def tick(self) -> NodeStatus:
-        return self.status
+    def _do_tick(self) -> NodeStatus:
+        return self.next_status
 
 
 @pytest.mark.parametrize(
@@ -37,7 +37,7 @@ class _EchoAction(BehaviorTree):
 def test_inverter(status: NodeStatus, final: NodeStatus) -> None:
     """test the inverter decorator"""
     child = _EchoAction()
-    child.status = status
+    child.next_status = status
     assert Inverter([child]).tick() == final
 
 
@@ -53,7 +53,7 @@ def test_inverter(status: NodeStatus, final: NodeStatus) -> None:
 def test_force_success(status: NodeStatus, final: NodeStatus) -> None:
     """test the force success decorator"""
     child = _EchoAction()
-    child.status = status
+    child.next_status = status
     assert ForceSuccess([child]).tick() == final
 
 
@@ -69,7 +69,7 @@ def test_force_success(status: NodeStatus, final: NodeStatus) -> None:
 def test_force_failure(status: NodeStatus, final: NodeStatus) -> None:
     """test the force failure decorator"""
     child = _EchoAction()
-    child.status = status
+    child.next_status = status
     assert ForceFailure([child]).tick() == final
 
 
@@ -87,7 +87,7 @@ class _StatusSequenceAction(BehaviorTree):
         raise NotImplementedError
 
     @override
-    def tick(self) -> NodeStatus:
+    def _do_tick(self) -> NodeStatus:
         return next(self.status_iterator)
 
 
@@ -158,7 +158,7 @@ def test_keep_running_until_failure(
 ) -> None:
     """test the keep running until failure decorator"""
     echo = _EchoAction()
-    echo.status = child_status
+    echo.next_status = child_status
 
     uut = KeepRunningUntilFailure([echo])
     assert uut.tick() == expected_status
@@ -180,7 +180,7 @@ def test_delay(
     blackboard.set("delay_msec", delay_msec)
 
     echo = _EchoAction()
-    echo.status = NodeStatus.SKIPPED
+    echo.next_status = NodeStatus.SKIPPED
 
     uut = Delay([echo]).attach_blackboard(blackboard)
     uut.tick()
@@ -195,7 +195,7 @@ def test_halt_delay(delay_msec: int) -> None:
     blackboard.set("delay_msec", delay_msec)
 
     echo = _EchoAction()
-    echo.status = NodeStatus.SUCCESS
+    echo.next_status = NodeStatus.SUCCESS
 
     uut = Delay([echo]).attach_blackboard(blackboard)
     assert uut.tick() == NodeStatus.RUNNING

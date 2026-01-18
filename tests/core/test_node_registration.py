@@ -5,7 +5,7 @@ from btpy import BehaviorTree, NodeRegistration, NodeStatus
 
 class _FakeNode(BehaviorTree):
     @override
-    def tick(self) -> NodeStatus:
+    def _do_tick(self) -> NodeStatus:
         return NodeStatus.SUCCESS
 
 

@@ -27,6 +27,8 @@ class BehaviorTree(ABC):
     ) -> None:
         self.__children: Final = __children or []
         self.__ports: Final = ports
+        self.__status: NodeStatus = NodeStatus.SKIPPED
+        self.__halted: bool = False
 
         self.init()
 
@@ -44,15 +46,30 @@ class BehaviorTree(ABC):
         """get the node's remapped ports"""
         return self.__ports
 
+    @final
+    def status(self) -> NodeStatus:
+        return self.__status
+
     @abstractmethod
-    def tick(self) -> NodeStatus:
+    def _do_tick(self) -> NodeStatus:
         """tick the node"""
         pass
 
+    @final
+    def tick(self) -> NodeStatus:
+        """tick the node"""
+        self.__halted = False
+        self.__status = NodeStatus.RUNNING
+        self.__status = self._do_tick()
+        return self.__status
+
     def halt(self) -> None:
         """halt the node"""
+        if self.__halted:
+            return
         for child in self.children():
             child.halt()
+        self.__halted = True
 
     def class_name(self) -> str:
         """get the name of the node's type"""
@@ -145,7 +162,7 @@ class SubTree(BehaviorTree):
         )
 
     @override
-    def tick(self) -> NodeStatus:
+    def _do_tick(self) -> NodeStatus:
         """tick the subtree"""
         return self.child().tick()
 

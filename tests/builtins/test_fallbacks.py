@@ -8,12 +8,12 @@ from btpy.builtins import Fallback, ReactiveFallback
 class _EchoAction(BehaviorTree):
     def init(self) -> None:
         super().init()
-        self.status = NodeStatus.SUCCESS
+        self.next_status = NodeStatus.SUCCESS
         self.halted = False
 
     @override
-    def tick(self) -> NodeStatus:
-        return self.status
+    def _do_tick(self) -> NodeStatus:
+        return self.next_status
 
     @override
     def halt(self) -> None:
@@ -38,8 +38,8 @@ def test_fallback(
 ) -> None:
     """test the fallback node"""
     one, two = _EchoAction(), _EchoAction()
-    one.status = first
-    two.status = second
+    one.next_status = first
+    two.next_status = second
 
     assert Fallback([one, two]).tick() == final
     assert one.halted == should_halt
@@ -97,7 +97,7 @@ def test_reactive_fallback(
     statuses = (first, second, third)
     echos = [_EchoAction() for _ in statuses]
     for echo, status in zip(echos, statuses, strict=True):
-        echo.status = status
+        echo.next_status = status
 
     assert ReactiveFallback(list(echos)).tick() == final
     for echo in echos:

@@ -1,4 +1,5 @@
-from typing import override
+from contextlib import contextmanager
+from typing import Iterator, override
 
 from btpy import BehaviorTree, BTParser, NodeStatus
 from btpy.builtins import Observer
@@ -8,16 +9,20 @@ class _Observer1(Observer):
     _calls = list[tuple[str, NodeStatus]]()
 
     @override
-    def observe(self, node: BehaviorTree, status: NodeStatus) -> None:
-        _Observer1._calls.append((node.name(), status))
+    @contextmanager
+    def observe(self, node: BehaviorTree) -> Iterator[None]:
+        yield
+        _Observer1._calls.append((node.name(), node.status()))
 
 
 class _Observer2(Observer):
     _calls = list[tuple[str, NodeStatus]]()
 
     @override
-    def observe(self, node: BehaviorTree, status: NodeStatus) -> None:
-        _Observer2._calls.append((node.name(), status))
+    @contextmanager
+    def observe(self, node: BehaviorTree) -> Iterator[None]:
+        yield
+        _Observer2._calls.append((node.name(), node.status()))
 
 
 def test_observers_ignore_observers() -> None:

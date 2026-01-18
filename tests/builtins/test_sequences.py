@@ -8,12 +8,12 @@ from btpy.builtins import ReactiveSequence, Sequence, SequenceWithMemory
 class _EchoAction(BehaviorTree):
     def init(self) -> None:
         super().init()
-        self.status = NodeStatus.SUCCESS
+        self.next_status = NodeStatus.SUCCESS
         self.halted = False
 
     @override
-    def tick(self) -> NodeStatus:
-        return self.status
+    def _do_tick(self) -> NodeStatus:
+        return self.next_status
 
     @override
     def halt(self) -> None:
@@ -37,8 +37,8 @@ def test_sequence(
 ) -> None:
     """test the sequence node"""
     one, two = _EchoAction(), _EchoAction()
-    one.status = first
-    two.status = second
+    one.next_status = first
+    two.next_status = second
 
     assert Sequence([one, two]).tick() == final
     assert one.halted == should_halt
@@ -48,8 +48,8 @@ def test_sequence(
 def test_sequence_with_memory() -> None:
     """test the sequence with memory node"""
     one, two = _EchoAction(), _EchoAction()
-    one.status = NodeStatus.SUCCESS
-    two.status = NodeStatus.RUNNING
+    one.next_status = NodeStatus.SUCCESS
+    two.next_status = NodeStatus.RUNNING
 
     uut_memory = SequenceWithMemory([one, two])
     uut_control = Sequence([one, two])
@@ -59,8 +59,8 @@ def test_sequence_with_memory() -> None:
 
     uut_memory.halt()
     uut_control.halt()
-    one.status = NodeStatus.RUNNING
-    two.status = NodeStatus.FAILURE
+    one.next_status = NodeStatus.RUNNING
+    two.next_status = NodeStatus.FAILURE
 
     assert uut_memory.tick() == NodeStatus.FAILURE
     assert uut_control.tick() == NodeStatus.RUNNING
@@ -69,8 +69,8 @@ def test_sequence_with_memory() -> None:
 def test_reactive_sequence() -> None:
     """test the reactive sequence node"""
     one, two = _EchoAction(), _EchoAction()
-    one.status = NodeStatus.SUCCESS
-    two.status = NodeStatus.RUNNING
+    one.next_status = NodeStatus.SUCCESS
+    two.next_status = NodeStatus.RUNNING
 
     uut_reactive = ReactiveSequence([one, two])
     uut_control = Sequence([one, two])
@@ -78,12 +78,12 @@ def test_reactive_sequence() -> None:
     assert uut_reactive.tick() == NodeStatus.RUNNING
     assert uut_control.tick() == NodeStatus.RUNNING
 
-    one.status = NodeStatus.FAILURE
-    two.status = NodeStatus.SUCCESS
+    one.next_status = NodeStatus.FAILURE
+    two.next_status = NodeStatus.SUCCESS
 
     assert uut_reactive.tick() == NodeStatus.FAILURE
     assert uut_control.tick() == NodeStatus.SUCCESS
 
-    one.status = NodeStatus.SUCCESS
+    one.next_status = NodeStatus.SUCCESS
 
     assert uut_reactive.tick() == NodeStatus.SUCCESS

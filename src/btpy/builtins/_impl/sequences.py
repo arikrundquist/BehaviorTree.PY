@@ -10,7 +10,7 @@ class SequenceWithMemory(BehaviorTree):
         self._index = 0
 
     @override
-    def tick(self) -> NodeStatus:
+    def _do_tick(self) -> NodeStatus:
         for self._index in range(self._index, len(self.children())):
             match self.children()[self._index].tick():
                 case NodeStatus.FAILURE:
@@ -41,7 +41,7 @@ class Sequence(SequenceWithMemory):
 @NodeRegistration.register
 class ReactiveSequence(BehaviorTree):
     @override
-    def tick(self) -> NodeStatus:
+    def _do_tick(self) -> NodeStatus:
         for i, child in enumerate(self.children()):
             match child.tick():
                 case NodeStatus.FAILURE:
