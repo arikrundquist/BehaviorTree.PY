@@ -179,6 +179,6 @@ class RunOnce(_Decorator):
                     self.__final_status = status
                     return status
 
-        then_skip = self.get_bool("then_skip").value
+        then_skip = self.get("then_skip", bool).value
         then_skip = True if then_skip is None else then_skip
         return NodeStatus.SKIPPED if then_skip else self.__final_status

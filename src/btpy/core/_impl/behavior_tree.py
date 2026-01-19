@@ -27,14 +27,14 @@ class BehaviorTree(ABC):
     ) -> None:
         self.__children: Final = __children or []
         self.__ports: Final = ports
-        self.__status: NodeStatus = NodeStatus.SKIPPED
-        self.__halted: bool = False
 
         self.init()
 
     def init(self) -> None:
         """initialize the node"""
+        self.__status: NodeStatus = NodeStatus.SKIPPED
         self.__blackboard: Blackboard | None = None
+        self.__halted: bool = False
 
     @final
     def children(self) -> Sequence["BehaviorTree"]:
@@ -115,13 +115,16 @@ class BehaviorTree(ABC):
     def get(
         self, key: str, converter: Callable[[Any], _T] | None = None
     ) -> Pointer[Any | None]:
+        if converter is bool:
+            return self._get_bool(key)
+
         assert self.__blackboard is not None
         ptr = self.__blackboard.get(key)
         if ptr.value is not None and converter is not None:
             ptr.value = converter(ptr.value)
         return ptr
 
-    def get_bool(self, key: str) -> Pointer[bool | None]:
+    def _get_bool(self, key: str) -> Pointer[bool | None]:
         """get the bool at the specified port"""
         ptr = self.get(key)
         match ptr.value:
@@ -173,6 +176,11 @@ class SubTree(BehaviorTree):
 
 class RootTree(SubTree):
     """a top level subtree"""
+
+    @override
+    def _do_tick(self) -> NodeStatus:
+        """tick the tree"""
+        return super()._do_tick()
 
     @override
     def make_blackboard(self, parent: Blackboard) -> Blackboard:

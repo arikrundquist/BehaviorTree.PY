@@ -7,8 +7,8 @@ from btpy.core import BTWriter
 
 
 @pytest.fixture
-def main_xml_file() -> Path:
-    return Path(__file__).parent / "main.xml"
+def main_xml_file() -> str:
+    return str(Path(__file__).parent / "main.xml")
 
 
 def test_parse_from_file(main_xml_file: Path) -> None:
@@ -31,7 +31,7 @@ def test_parse_from_file(main_xml_file: Path) -> None:
     assert actual.strip() == expected.strip()
 
 
-def test_parse_from_string(main_xml_file: Path) -> None:
+def test_parse_from_string(main_xml_file: str) -> None:
     """test that a tree can be parsed from an xml string"""
     from_file = BTWriter.to_xml(BTParser().parse(main_xml_file))
     assert from_file == BTWriter.to_xml(BTParser().parse_string(from_file))

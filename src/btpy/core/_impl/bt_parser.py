@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Callable, Self
+from typing import Callable, Self, overload
 from xml.etree import ElementTree as XML
 
 from btpy.core._impl.behavior_tree import BehaviorTree, RootTree, SubTree
@@ -16,8 +16,18 @@ class BTParser:
         self._tree_descriptions = dict[str, XML.Element]()
         self._decorators = decorators
 
+    @overload
+    def parse(self, path: str, blackboard: Blackboard | None = None) -> RootTree:
+        """load a `BehaviorTree` from file"""
+
+    @overload
     def parse(self, path: Path, blackboard: Blackboard | None = None) -> RootTree:
         """load a `BehaviorTree` from file"""
+
+    def parse(self, path: Path | str, blackboard: Blackboard | None = None) -> RootTree:
+        if isinstance(path, str):
+            return self.parse(Path(path))
+
         return self._parse(path, first=True).get(
             *self._decorators, global_blackboard=blackboard
         )
