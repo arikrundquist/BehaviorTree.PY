@@ -132,6 +132,7 @@ from btpy import BehaviorTree, NodeStatus
 class UserDefinedNode(BehaviorTree):
     @override
     def init(self) -> None:
+        super().init()
         self._times_halted = 0
 
     @override

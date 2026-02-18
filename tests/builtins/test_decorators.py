@@ -118,6 +118,39 @@ def test_repeat(
 
 
 @pytest.mark.parametrize(
+    "num_cycles,status_sequence,expected_status",
+    [
+        (3, [(2, NodeStatus.RUNNING)], NodeStatus.RUNNING),
+        (
+            4,
+            [(1, NodeStatus.FAILURE), (3, NodeStatus.SUCCESS), (1, NodeStatus.RUNNING)],
+            NodeStatus.RUNNING,
+        ),
+        (
+            5,
+            [(3, NodeStatus.SUCCESS), (1, NodeStatus.RUNNING), (2, NodeStatus.SUCCESS)],
+            NodeStatus.SUCCESS,
+        ),
+    ],
+)
+def test_repeat_maintains_counter(
+    num_cycles: int | None,
+    status_sequence: list[tuple[int, NodeStatus]],
+    expected_status: NodeStatus,
+) -> None:
+    """test that the repeat decorator correctly tracks its iteration counter"""
+    blackboard = Blackboard()
+    blackboard.set("num_cycles", num_cycles)
+
+    child = _StatusSequenceAction()
+    child.status_sequence = status_sequence
+
+    uut = Repeat([child]).attach_blackboard(blackboard)
+    uut.tick()
+    assert uut.tick() == expected_status
+
+
+@pytest.mark.parametrize(
     "num_attempts,status_sequence,expected_status",
     [
         (None, [], NodeStatus.FAILURE),

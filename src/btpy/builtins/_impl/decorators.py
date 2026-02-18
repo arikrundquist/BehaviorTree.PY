@@ -65,12 +65,22 @@ class ForceFailure(_Decorator):
 @NodeRegistration.register
 class Repeat(_Decorator):
     @override
+    def init(self) -> None:
+        super().init()
+        self.__idx = 0
+
+    @override
+    def halt(self) -> None:
+        super().halt()
+        self.__idx = 0
+
+    @override
     def _do_tick(self) -> NodeStatus:
         num_cycles = self.get("num_cycles", int).value
         if num_cycles is None or num_cycles < -1:
             return NodeStatus.FAILURE
 
-        iterator = self.__forever() if num_cycles < 0 else range(num_cycles)
+        iterator = self.__forever() if num_cycles < 0 else range(self.__idx, num_cycles)
 
         for _ in iterator:
             match status := self.tick_child():
@@ -81,6 +91,7 @@ class Repeat(_Decorator):
                     return status
 
                 case NodeStatus.SUCCESS:
+                    self.__idx = self.__idx + 1
                     continue
 
                 case _:  # pragma: no cover
