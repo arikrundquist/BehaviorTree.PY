@@ -1,4 +1,5 @@
-import btpy.builtins as builtins
+from btpy import builtins, core
+from btpy.builtins import StatefulActionNode
 from btpy.core import BehaviorTree, Blackboard, BTParser, NodeRegistration, NodeStatus
 
 __all__ = [
@@ -6,6 +7,8 @@ __all__ = [
     "Blackboard",
     "BTParser",
     "builtins",
+    "core",
     "NodeRegistration",
     "NodeStatus",
+    "StatefulActionNode",
 ]

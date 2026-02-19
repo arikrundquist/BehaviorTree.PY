@@ -11,6 +11,7 @@ from btpy.builtins._impl.decorators import (
 from btpy.builtins._impl.fallbacks import Fallback, ReactiveFallback
 from btpy.builtins._impl.observer import Observer
 from btpy.builtins._impl.sequences import ReactiveSequence, Sequence, SequenceWithMemory
+from btpy.builtins._impl.stateful_action_node import StatefulActionNode
 
 __all__ = [
     "Delay",
@@ -27,4 +28,5 @@ __all__ = [
     "RunOnce",
     "Sequence",
     "SequenceWithMemory",
+    "StatefulActionNode",
 ]
