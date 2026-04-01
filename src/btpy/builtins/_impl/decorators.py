@@ -80,9 +80,14 @@ class Repeat(_Decorator):
         if num_cycles is None or num_cycles < -1:
             return NodeStatus.FAILURE
 
+        index = self.get("__index", str).value
+
         iterator = self.__forever() if num_cycles < 0 else range(self.__idx, num_cycles)
 
         for _ in iterator:
+            if index is not None:
+                self.get(index).value = self.__idx
+
             match status := self.tick_child():
                 case NodeStatus.RUNNING:
                     return NodeStatus.RUNNING

@@ -150,6 +150,29 @@ def test_repeat_maintains_counter(
     assert uut.tick() == expected_status
 
 
+@pytest.mark.parametrize("num_cycles", [1, 2, 3, 4])
+@pytest.mark.parametrize("target_index", ["index1", "index2", "index3"])
+def test_repeat_publishes_index(num_cycles: int, target_index: str) -> None:
+    """test that the repeat node outputs to a port specified by its `__index` port"""
+    blackboard = Blackboard()
+
+    child = _StatusSequenceAction()
+    child.status_sequence = [
+        (1, NodeStatus.RUNNING),
+        (1, NodeStatus.SUCCESS),
+    ] * num_cycles
+
+    blackboard.set("num_cycles", num_cycles)
+    blackboard.set("__index", target_index)
+
+    uut = Repeat([child]).attach_blackboard(blackboard)
+    assert uut.tick() == NodeStatus.RUNNING
+    assert blackboard.get(target_index).value == 0
+    for i in range(1, num_cycles):
+        assert uut.tick() == NodeStatus.RUNNING
+        assert blackboard.get(target_index).value == i
+
+
 @pytest.mark.parametrize(
     "num_attempts,status_sequence,expected_status",
     [
